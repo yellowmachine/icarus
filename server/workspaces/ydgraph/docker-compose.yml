@@ -1,0 +1,19 @@
+services:
+  db:
+    image: dgraph/standalone:master
+    #ports:
+    #  - 8080:8080
+  code: 
+    build: .
+    ports: 
+      - 8080:8080
+      - 5173:5173
+    #volumes:
+    #   - "$HOME/.config:/root/.config"
+    #   - ~/.ssh:/root/.ssh
+    command:
+      - /bin/sh
+      - -c
+      - |
+        git clone https://github.com/yellowmachine/ika-example-dgraph.git .
+        code-server /project
