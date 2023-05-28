@@ -6,7 +6,7 @@
 
     const base = $page.url.hostname
 
-    function domain(port: string){
+    function domain(port: number|undefined){
         return `https://${base}/${port}/`
     }
 </script>

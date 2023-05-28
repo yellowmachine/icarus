@@ -9,15 +9,14 @@ export default defineConfig({
 			extractors: [
 			  extractorSvelte()
 			],
-			/* more options */
 		  }), 
 		sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
-	server: {
+	/*server: {
 		hmr: {
-			path: '/5173'
+			path: '/8080'
 		}
-	}	
+	}*/	
 });
