@@ -44,7 +44,7 @@ export const handle: Handle = createRouteGuard({
  beforeEach(to, event, next) {
     // check if the user is authenticated ot not
     const user = getCurrentUser(event)
-    //if (user) event.locals.user = user
+    if (user) event.locals.user = user.id
   
     // not authenticated and requires authentication is true
     if (!user && to.meta?.auth) {
