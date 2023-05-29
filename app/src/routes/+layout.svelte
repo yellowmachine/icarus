@@ -10,6 +10,4 @@
 
 {#if user}
     <slot />
-{:else}
-    Render a form to write password
 {/if}
