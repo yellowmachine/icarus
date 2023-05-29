@@ -24,8 +24,10 @@
 
 	onMount(subscribe);
 
+    let workspace: WORKSPACE | null = null
+
     function onEdit(event: CustomEvent<{workspace:string}>){
-        workspace = event.detail.workspace
+        workspace =  {...state.filter(x => x.workspace === event.detail.workspace)[0]}
     }
 
     function onState(event: CustomEvent<{state:WORKSPACE[]}>){
@@ -44,14 +46,11 @@
 		clearInterval(interval);
 	});
 
-    let workspace: string|null = null
-    $: editWorkspace = workspace === null ? null : state.filter(x => x.workspace === workspace)[0]
-
 </script>
 
 <main>
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
-        <Form workspace={editWorkspace} on:save={onSave} />
+        <Form workspace={workspace} on:save={onSave} />
       </div>
 </main>
