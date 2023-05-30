@@ -8,6 +8,7 @@ RUN apt-get install -y \
 
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
+RUN npm install -g pnpm
 COPY config.yaml /root/.config/code-server/
 WORKDIR /project
 

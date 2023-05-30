@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { PUBLIC_MODE, PUBLIC_HTTP } from '$env/static/public';
+    import { PUBLIC_MODE, PUBLIC_HTTP, PUBLIC_DOMAIN } from '$env/static/public';
 	import type { WORKSPACE } from "./types";
-    import { page } from '$app/stores';
+    //import { page } from '$app/stores';
 
     export let data: WORKSPACE["services"][number];
 
-    const base = $page.url.hostname
+    //const base = $page.url.hostname
+    const base = PUBLIC_DOMAIN
 
     function url(port: number|undefined){
         if(PUBLIC_MODE === 'subdomain')

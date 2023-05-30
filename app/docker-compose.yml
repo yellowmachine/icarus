@@ -8,8 +8,11 @@ services:
         - PUBLIC_HTTP=http
         - PASSWORD=secret
         - JWT_SECRET=secret
+        - PUBLIC_DOMAIN=yellowdev.fun
     ports:
       - 3000:3000
+    environment:
+      - ORIGIN=https://app.yellowdev.fun
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - $PWD/../server/workspaces:/workspaces
