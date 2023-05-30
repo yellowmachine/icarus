@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { MODE } from '$env/static/private';
 	import type { WORKSPACE } from "./types";
     import { page } from '$app/stores';
 
@@ -7,7 +8,10 @@
     const base = $page.url.hostname
 
     function domain(port: number|undefined){
-        return `https://${base}/${port}/`
+        if(MODE === 'subdomain')
+            return `https://${port}.${base}/`
+        else
+            return `https://${base}/${port}/`
     }
 </script>
 
