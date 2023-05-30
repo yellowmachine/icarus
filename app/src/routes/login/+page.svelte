@@ -21,6 +21,6 @@
 </form>
 </div>
 
-{#if form && !form.success}
+{#if form?.error}
     <span class="text-red-500">Error in login!</span>
 {/if}

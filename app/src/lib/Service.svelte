@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { MODE } from '$env/static/private';
+    import { PUBLIC_MODE, PUBLIC_HTTP } from '$env/static/public';
 	import type { WORKSPACE } from "./types";
     import { page } from '$app/stores';
 
@@ -8,12 +8,12 @@
     const base = $page.url.hostname
 
     function url(port: number|undefined){
-        if(MODE === 'subdomain')
-            return `https://${port}.${base}/`
-        else if(MODE === 'path')
-            return `https://${base}/${port}/`
+        if(PUBLIC_MODE === 'subdomain')
+            return `${PUBLIC_HTTP}://${port}.${base}/`
+        else if(PUBLIC_MODE === 'path')
+            return `${PUBLIC_HTTP}://${base}/${port}/`
         else
-            return `https://${base}:${port}/`
+            return `${PUBLIC_HTTP}://${base}:${port}/`
     }
 </script>
 
