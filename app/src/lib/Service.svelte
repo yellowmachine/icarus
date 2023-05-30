@@ -7,17 +7,19 @@
 
     const base = $page.url.hostname
 
-    function domain(port: number|undefined){
+    function url(port: number|undefined){
         if(MODE === 'subdomain')
             return `https://${port}.${base}/`
-        else
+        else if(MODE === 'path')
             return `https://${base}/${port}/`
+        else
+            return `https://${base}:${port}/`
     }
 </script>
 
 <div>{data.name}</div>
 <ul>
 {#each data.ports as port}
-    <li><a target="_blank" href={ domain(port.mapped?.port) }>Open {port.mapped?.port}:{port.exposed.port}</a></li>
+    <li><a target="_blank" href={ url(port.mapped?.port) }>Open {port.mapped?.port}:{port.exposed.port}</a></li>
 {/each}
 </ul>
