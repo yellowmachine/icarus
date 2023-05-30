@@ -1,6 +1,13 @@
 services:
   ika:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PUBLIC_MODE=port
+        - PUBLIC_HTTP=http
+        - PASSWORD=secret
+        - JWT_SECRET=secret
     ports:
       - 3000:3000
     volumes:
