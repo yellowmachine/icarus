@@ -1,10 +1,10 @@
 import { readdir, readFile, writeFile, access, rm, mkdir } from 'fs/promises';
-const { spawn } = require("child_process");
+import { spawn } from "child_process";
 import { v2 as compose } from 'docker-compose';
 import  path from 'path';
 // @ts-ignore
-import DockerEvents from "@direktspeed/docker-events";
-import Dockerode from 'dockerode';
+//import DockerEvents from "@direktspeed/docker-events";
+//import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
@@ -54,7 +54,7 @@ function startEmitter(){
 
 //startEmitter()
 
-function _cmd(command: string[]) {
+async function _cmd(command: string[]) {
     let p = spawn(command[0], command.slice(1));
     
     return new Promise((resolveFunc) => {

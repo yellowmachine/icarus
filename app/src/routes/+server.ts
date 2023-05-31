@@ -1,15 +1,24 @@
 import { workspaceEmitter } from '../lib/ika';
 import type { RequestHandler } from './$types';
 
+function enqueue(controller: ReadableStreamDefaultController, msg: any){
+	try{
+		controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
+	}catch(err){
+		console.log(err)
+	}
+	
+}
+
 export const GET: RequestHandler = () => {
 
 	const stream = new ReadableStream({
 		start(controller) {
 			workspaceEmitter.on('log:out', (msg: any) => {
-				controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
+				enqueue(controller, msg)
 			});
 			workspaceEmitter.on('log:err', (msg: any) => {
-				controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
+				enqueue(controller, msg)
 			});
 		},
 		cancel() {

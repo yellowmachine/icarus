@@ -5,6 +5,7 @@
     import type { WORKSPACE } from '$lib/types';
     import Form from '$lib/Form.svelte';
 	import { invalidateAll } from '$app/navigation';
+    import Console from '$lib/Console.svelte';
 
     export let data: PageData;
     
@@ -14,14 +15,20 @@
         state = data.ps;
     }
 
+    let lines: string[] = [];
+
 	function subscribe() {
 		const sse = new EventSource('/');
 		sse.onmessage = (ev) => {
-            console.log(ev)
+            console.log(ev.data)
+            lines.push(ev.data)
+            lines = lines
             //state = ev.data.ps;
         }
 		return () => sse.close();
 	}
+
+    $: truncatedLines = lines.slice(-20)
 
 	onMount(subscribe);
 
@@ -53,5 +60,6 @@
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
         <Form workspace={workspace} on:save={onSave} />
+        <Console lines={truncatedLines} />
       </div>
 </main>
