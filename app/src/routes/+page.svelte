@@ -38,7 +38,8 @@
 
     function onState(event: CustomEvent<{state:WORKSPACE[]}>){
         state = event.detail.state
-        invalidateAll()
+        console.log('event.detail', event.detail)
+        //invalidateAll()
     }
 
     function onSave(){
@@ -47,10 +48,12 @@
 
     // this is necessary because this is still not receiving state events from server and the state
     // from up or down actions is done server side before up or down is completed 
+    /*
     const interval = setInterval(invalidateAll, 5000);
 	onDestroy(() => {
 		clearInterval(interval);
 	});
+    */
 
 </script>
 

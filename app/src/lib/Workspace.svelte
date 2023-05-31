@@ -23,6 +23,7 @@
         try{
             loading = true;
             const state = await trpc($page)[c].mutate({workspace});
+            console.log('state', state)
             dispatch('state', {
                 state
             });
