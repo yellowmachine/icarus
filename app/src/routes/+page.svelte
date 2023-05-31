@@ -17,7 +17,8 @@
 	function subscribe() {
 		const sse = new EventSource('/');
 		sse.onmessage = (ev) => {
-            state = ev.data.ps;
+            console.log(ev)
+            //state = ev.data.ps;
         }
 		return () => sse.close();
 	}

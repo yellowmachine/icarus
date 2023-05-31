@@ -1,14 +1,14 @@
 import { workspaceEmitter } from '../lib/ika';
+import type { RequestHandler } from './$types';
 
-/** @type {import('./$types').RequestHandler} */
-export const GET = () => {
+export const GET: RequestHandler = () => {
 
 	const stream = new ReadableStream({
 		start(controller) {
-			workspaceEmitter.on('event:ps', (msg: any) => {
+			workspaceEmitter.on('log:out', (msg: any) => {
 				controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
 			});
-			workspaceEmitter.on('event:log', (msg: any) => {
+			workspaceEmitter.on('log:err', (msg: any) => {
 				controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
 			});
 		},
