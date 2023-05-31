@@ -17,7 +17,7 @@ console.log(rootPath)
 export const workspaceEmitter = new EventEmitter();
 
 async function _cmd(command: string[], workspace: string) {
-    let p = spawn(command[0], command.slice(1), { env: {SSH_KEY}, cwd: `${rootPath}/${workspace}`});
+    let p = spawn(command[0], command.slice(1), { env: {SSH_KEY}, cwd: `${workspace}`});
     
     return new Promise((resolveFunc) => {
       p.stdout.on("data", (data: string) => {
@@ -37,7 +37,6 @@ export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: strin
     if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
     
     try{
-        //const result = await _cmd([`${rootPath}/${cmd}.sh`, workspace, ...(options || [])])
         const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace)
         return { exitCode: 0, data: result}
     }catch(err){
