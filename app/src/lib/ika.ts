@@ -2,13 +2,9 @@ import { readdir, readFile, writeFile, access, rm, mkdir } from 'fs/promises';
 import { spawn } from "child_process";
 import { v2 as compose } from 'docker-compose';
 import  path from 'path';
-// @ts-ignore
-//import DockerEvents from "@direktspeed/docker-events";
-//import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
-//import { SSH_KEY } from '$env/static/private'
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
