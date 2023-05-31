@@ -72,10 +72,11 @@ function _cmd(command: string[]) {
   
 
 export async function cmd(cmd: "ps" | "upAll" | "down" | "config", workspace: string, options?: string[]){
+    if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
+    
     try{
-        await _cmd([cmd, workspace, ...options ? options: []])
-        //const ps = await getStates()
-        return { exitCode: 0, data: { services: []}}
+        const result = await _cmd([`${rootPath}/${cmd}.sh`, workspace, ...(options || [])])
+        return { exitCode: 0, data: result}
     }catch(err){
         console.log(cmd, err)
         return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}

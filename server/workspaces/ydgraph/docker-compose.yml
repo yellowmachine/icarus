@@ -13,7 +13,7 @@ services:
       - 8080:8080
       - 5173:5173
     environment:
-      - SSH_KEY=$SSH_KEY # SSH_KEY="$(cat ~/.ssh/id_ed25519)"
+      - SSH_KEY=$SSH_KEY
     command:
       - /bin/sh
       - -c
