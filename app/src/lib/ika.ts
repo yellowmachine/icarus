@@ -8,7 +8,7 @@ import  path from 'path';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
-import { SSH_KEY } from '$env/static/private'
+//import { SSH_KEY } from '$env/static/private'
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
@@ -17,7 +17,7 @@ console.log(rootPath)
 export const workspaceEmitter = new EventEmitter();
 
 async function _cmd(command: string[], workspace: string) {
-    let p = spawn(command[0], command.slice(1), { env: {SSH_KEY}, cwd: `${workspace}`});
+    let p = spawn(command[0], command.slice(1), { /*env: {SSH_KEY},*/ cwd: `${workspace}`});
     
     return new Promise((resolveFunc) => {
       p.stdout.on("data", (data: string) => {

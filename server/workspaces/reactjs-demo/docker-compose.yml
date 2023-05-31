@@ -1,11 +1,8 @@
 services:
   code: 
-    build: .
+    image: nodecode
     ports: 
       - 8080:8080
-    #volumes:
-    #   - "$HOME/.config:/root/.config"
-    #   - ~/.ssh:/root/.ssh
     command:
       - /bin/sh
       - -c

@@ -1,12 +1,13 @@
 services:
   db:
     image: dgraph/standalone:master
-  code: 
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SSH_KEY=$SSH_KEY
+  code:
+    image: codenode 
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    #  args:
+    #    - SSH_KEY=$SSH_KEY
     ports: 
       - 8080:8080
       - 5173:5173
