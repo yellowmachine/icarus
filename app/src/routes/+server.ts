@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 
 function enqueue(controller: ReadableStreamDefaultController, msg: any){
 	try{
-		controller.enqueue('data: ' + JSON.stringify(msg) + "\n\n");
+		controller.enqueue('data: ' + msg /*JSON.stringify(msg)*/ + "\n\n");
 	}catch(err){
 		console.log(err)
 	}

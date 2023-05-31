@@ -1,6 +1,6 @@
 services:
   code: 
-    image: nodecode
+    image: codenode
     ports: 
       - 8080:8080
     command:
