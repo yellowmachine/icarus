@@ -1,4 +1,5 @@
 import { readdir, readFile, writeFile, access, rm, mkdir } from 'fs/promises';
+const { spawn } = require("child_process");
 import { v2 as compose } from 'docker-compose';
 import  path from 'path';
 // @ts-ignore
@@ -14,6 +15,7 @@ console.log(rootPath)
 
 export const workspaceEmitter = new EventEmitter();
 
+/*
 function startEmitter(){
     const emitter = new DockerEvents({
         docker: new Dockerode({socketPath: '/var/run/docker.sock'}),
@@ -48,10 +50,39 @@ function startEmitter(){
 
     return emitter.stop
 }
+*/
 
 //startEmitter()
 
+function _cmd(command: string[]) {
+    let p = spawn(command[0], command.slice(1));
+    
+    return new Promise((resolveFunc) => {
+      p.stdout.on("data", (data: string) => {
+        workspaceEmitter.emit('log:out', data.toString())
+      });
+      p.stderr.on("data", (data: string) => {
+        workspaceEmitter.emit('log:err', data.toString())
+      });
+      p.on("exit", (code: number) => {
+        resolveFunc(code);
+      });
+    });
+}
+  
+
 export async function cmd(cmd: "ps" | "upAll" | "down" | "config", workspace: string, options?: string[]){
+    try{
+        await _cmd([cmd, workspace, ...options ? options: []])
+        //const ps = await getStates()
+        return { exitCode: 0, data: { services: []}}
+    }catch(err){
+        console.log(cmd, err)
+        return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}
+    }
+}
+
+export async function cmdCompose(cmd: "ps" | "upAll" | "down" | "config", workspace: string, options?: string[]){
     
     try{
         const res = await compose[cmd]({

@@ -1,16 +1,19 @@
+version: "3"
+
 services:
   db:
     image: dgraph/standalone:master
-    #ports:
-    #  - 8080:8080
   code: 
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SSH_KEY=$SSH_KEY
     ports: 
       - 8080:8080
       - 5173:5173
-    #volumes:
-    #   - "$HOME/.config:/root/.config"
-    #   - ~/.ssh:/root/.ssh
+    environment:
+      - SSH_KEY=$SSH_KEY # SSH_KEY="$(cat ~/.ssh/id_ed25519)"
     command:
       - /bin/sh
       - -c
