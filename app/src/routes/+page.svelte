@@ -20,10 +20,8 @@
 	function subscribe() {
 		const sse = new EventSource('/');
 		sse.onmessage = (ev) => {
-            console.log(ev.data)
             lines.push(ev.data)
             lines = lines
-            //state = ev.data.ps;
         }
 		return () => sse.close();
 	}
