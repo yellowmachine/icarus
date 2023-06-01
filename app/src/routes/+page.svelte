@@ -45,6 +45,7 @@
         try{
             //loading = true;
             state = await trpc($page).states.query();
+            console.log(state)
             //error = ""
         }catch(err){
             //error = JSON.stringify(err)
@@ -58,7 +59,7 @@
 </script>
 
 <main>
-      <button class="link text-orange-500" on:click={refresh}>Manually refresh</button>
+      <a href="#" class="link text-orange-500 absolute top-0 right-0" on:click={refresh}>Manually refresh</a>
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
         <Form workspace={workspace} on:save={refresh} />
