@@ -15,6 +15,9 @@ export const auth = t.middleware(async ({ next, ctx }) => {
 const authProcedure = t.procedure.use(auth)
 
 export const router = t.router({
+  states: authProcedure.query(async () => {
+    return await getStates()
+  }),
   up: authProcedure.input(
     z.object({workspace: z.string()})
   ).mutation(async ({ input }) => {

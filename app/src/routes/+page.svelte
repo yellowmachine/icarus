@@ -4,8 +4,9 @@
     import Workspaces from '$lib/Workspaces.svelte';
     import type { WORKSPACE } from '$lib/types';
     import Form from '$lib/Form.svelte';
-	import { invalidateAll } from '$app/navigation';
     import Console from '$lib/Console.svelte';
+    import { page } from '$app/stores';
+    import { trpc } from '$lib/trpc/client';
 
     export let data: PageData;
     
@@ -40,16 +41,27 @@
         state = event.detail.state
     }
 
-    function onSave(){
-        invalidateAll()
+    async function refresh(){
+        try{
+            //loading = true;
+            state = await trpc($page).states.query();
+            //error = ""
+        }catch(err){
+            //error = JSON.stringify(err)
+            console.error(err)
+        }
+        finally{
+            //loading = false;
+        }
     }
 
 </script>
 
 <main>
+      <button class="link text-orange-500" on:click={refresh}>Manually refresh</button>
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
-        <Form workspace={workspace} on:save={onSave} />
+        <Form workspace={workspace} on:save={refresh} />
         <Console lines={truncatedLines} />
       </div>
 </main>

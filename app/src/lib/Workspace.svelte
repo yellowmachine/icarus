@@ -7,7 +7,6 @@
     import H from "./H.svelte";
     import { page } from '$app/stores';
     import { trpc } from '$lib/trpc/client';
-
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher<{ 
