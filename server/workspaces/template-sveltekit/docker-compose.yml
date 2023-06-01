@@ -1,0 +1,11 @@
+services:
+  code: 
+    image: codenode
+    ports: 
+      - 8080:8080
+    command:
+      - /bin/sh
+      - -c
+      - |
+        yes | npx degit https://github.com/yellowmachine/kit-uno-stories-trpc.git .
+        code-server /project
