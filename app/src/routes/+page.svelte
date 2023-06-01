@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
     import Workspaces from '$lib/Workspaces.svelte';
     import type { WORKSPACE } from '$lib/types';
@@ -38,22 +38,11 @@
 
     function onState(event: CustomEvent<{state:WORKSPACE[]}>){
         state = event.detail.state
-        console.log('event.detail', event.detail)
-        //invalidateAll()
     }
 
     function onSave(){
         invalidateAll()
     }
-
-    // this is necessary because this is still not receiving state events from server and the state
-    // from up or down actions is done server side before up or down is completed 
-    /*
-    const interval = setInterval(invalidateAll, 5000);
-	onDestroy(() => {
-		clearInterval(interval);
-	});
-    */
 
 </script>
 

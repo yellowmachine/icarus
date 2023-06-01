@@ -4,7 +4,7 @@
 </script>
 
 <div class="w-full pl-2">
-  <div class="coding inverse-toggle px-5 pt-4 shadow-lg text-yellow-100 text-sm font-mono subpixel-antialiased 
+  <div class="coding inverse-toggle px-5 pt-4 shadow-lg text-yellow-500 text-sm font-mono subpixel-antialiased 
               bg-gray-800  pb-6 pt-4 rounded-lg leading-normal overflow-hidden">
       <div class="top mb-2 flex">
           <div class="h-3 w-3 bg-red-500 rounded-full"></div>
