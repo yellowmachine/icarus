@@ -12,16 +12,16 @@ function enqueue(controller: ReadableStreamDefaultController, msg: string){
 
 export const GET: RequestHandler = () => {
 
+	let f: (msg: any) => void;
 	const stream = new ReadableStream({
 		start(controller) {
-			workspaceEmitter.on('log:out', (msg: any) => {
-				enqueue(controller, `${msg}`)
-			});
-			workspaceEmitter.on('log:err', (msg: any) => {
-				enqueue(controller, `${msg}`)
-			});
+			f = (msg: any) => enqueue(controller, `${msg}`)
+			workspaceEmitter.on('log:out', f);
+			workspaceEmitter.on('log:err', f);
 		},
 		cancel(x: any) {
+			workspaceEmitter.removeListener('log:out', f)
+			workspaceEmitter.removeListener('log:err', f)
 			console.log('controller cancelled', x)
 		}
 	});
