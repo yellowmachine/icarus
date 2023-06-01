@@ -22,12 +22,11 @@
 		const sse = new EventSource('/');
 		sse.onmessage = (ev) => {
             lines.push(ev.data)
+            if(lines.length > 20) lines.shift()
             lines = lines
         }
 		return () => sse.close();
 	}
-
-    $: truncatedLines = lines.slice(-20)
 
 	onMount(subscribe);
 
@@ -63,6 +62,6 @@
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
         <Form workspace={workspace} on:save={refresh} />
-        <Console lines={truncatedLines} />
+        <Console {lines} />
       </div>
 </main>
