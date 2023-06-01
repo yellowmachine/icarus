@@ -18,11 +18,26 @@
     let loading = false;
     let error = ""
 
+    function polling(){
+        const interval = setInterval(async ()=>{
+            let state = await trpc($page).states.query();
+            
+            const w = state.filter(s => s.workspace === data.workspace)[0]
+            if(w.services.length > 0){
+                dispatch('state', {
+                    state
+                })
+                clearInterval(interval)
+            }
+        }, 3000);
+    }
+
     async function cmd(c: "up"|"down"|"delete", workspace: string){
         try{
             loading = true;
+            if(c === 'up') polling()
             const state = await trpc($page)[c].mutate({workspace});
-            console.log('state', state)
+
             dispatch('state', {
                 state
             });
