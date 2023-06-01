@@ -8,7 +8,6 @@ services:
         - PASSWORD=secret
         - JWT_SECRET=secret
         - PUBLIC_DOMAIN=yellowdev.fun
-        - SSH_KEY=$SSH_KEY
     ports:
       - 3000:3000
     environment:
