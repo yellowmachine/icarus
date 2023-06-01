@@ -39,7 +39,7 @@
 
 {#if loading}
     <div class="text-orange-500">Waiting...</div>
-{/if}
+{:else}
 <div class="grid grid-rows-1 grid-flow-col gap-4">
     {#if data.isValid}
         <button on:click={up} class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -67,5 +67,5 @@
         </button>
     {/if}
 </div>
-
+{/if}
 
