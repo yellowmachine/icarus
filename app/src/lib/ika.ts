@@ -13,7 +13,7 @@ console.log(rootPath)
 export const workspaceEmitter = new EventEmitter();
 
 async function _cmd(command: string[], workspace: string) {
-    let p = spawn(command[0], command.slice(1), { /*env: {SSH_KEY},*/ cwd: `${workspace}`});
+    let p = spawn(command[0], command.slice(1), { cwd: `${workspace}`});
     
     return new Promise((resolveFunc) => {
       p.stdout.on("data", (data: string) => {

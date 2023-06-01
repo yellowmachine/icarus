@@ -58,7 +58,7 @@
 </script>
 
 <main>
-      <a href="#" class="link text-orange-500 absolute top-0 right-0" on:click={refresh}>Manually refresh</a>
+      <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute top-0 right-0" on:click={refresh}>Manually refresh</button>
       <div class="grid grid-cols-3 gap-4">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} />
         <Form workspace={workspace} on:save={refresh} />

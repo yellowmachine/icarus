@@ -28,6 +28,7 @@
             });
             error = ""
         }catch(err){
+            console.log(err)
             error = JSON.stringify(err)
         }
         finally{
