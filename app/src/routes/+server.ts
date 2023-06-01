@@ -1,11 +1,11 @@
 import { workspaceEmitter } from '../lib/ika';
 import type { RequestHandler } from './$types';
 
-function enqueue(controller: ReadableStreamDefaultController, msg: any){
+function enqueue(controller: ReadableStreamDefaultController, msg: string){
 	try{
 		controller.enqueue('data: ' + msg + "\n\n");
 	}catch(err){
-		console.log(err)
+		console.log('error in controller', err)
 	}
 	
 }
@@ -15,14 +15,14 @@ export const GET: RequestHandler = () => {
 	const stream = new ReadableStream({
 		start(controller) {
 			workspaceEmitter.on('log:out', (msg: any) => {
-				enqueue(controller, msg)
+				enqueue(controller, `${msg}`)
 			});
 			workspaceEmitter.on('log:err', (msg: any) => {
-				enqueue(controller, msg)
+				enqueue(controller, `${msg}`)
 			});
 		},
-		cancel() {
-			
+		cancel(x: any) {
+			console.log('controller cancelled', x)
 		}
 	});
 
