@@ -137,7 +137,7 @@ async function isWorkspace(name: string){
 }
 
 export async function upWorkspace(workspace: string){
-    return await cmd('up', `${rootPath}/${workspace}`, ["--build"])
+    return await cmd('up', `${rootPath}/${workspace}`)
 }
 
 export async function downWorkspace(workspace: string){
