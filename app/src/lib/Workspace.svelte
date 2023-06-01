@@ -28,6 +28,7 @@
                     state
                 })
                 clearInterval(interval)
+                loading = false
             }
         }, 3000);
     }
