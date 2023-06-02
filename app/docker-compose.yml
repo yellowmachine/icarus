@@ -13,10 +13,10 @@ services:
       - 3000:3000
     environment:
       - ORIGIN=https://app.yellowdev.fun
-      - MODE=subdomain
+      - MODE=port
       - PASSWORD=secret
       - JWT_SECRET=secret
-      - DOMAIN=yellowdev.fun
+      - DOMAIN=localhost
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - $PWD/../server/workspaces:/workspaces
