@@ -140,8 +140,8 @@ export async function upWorkspace(workspace: string){
     return await cmd('up', `${rootPath}/${workspace}`)
 }
 
-export async function downWorkspace(workspace: string){
-    return await cmd('down', `${rootPath}/${workspace}`)
+export async function downWorkspace(workspace: string, options?: string[]){
+    return await cmd('down', `${rootPath}/${workspace}`, options)
 }
 
 async function isRunning(name: string){
@@ -172,7 +172,7 @@ export async function saveWorkspace(name: string, readme: string, specification:
 export async function deleteWorkspace(name: string){
     const p = `${rootPath}/${name}`
     if(!isWorkspace(p)) throw "Workspace doesn't exist"
-    //await downWorkspace(p)
+    await downWorkspace(p, ["-v"])
     await rm(p, { recursive: true, force: true });
     return {done: true}
 }
