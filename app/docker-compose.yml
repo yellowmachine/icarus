@@ -1,17 +1,22 @@
 services:
   ika:
+    image: yellowmachine/icarus
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - PUBLIC_MODE=port
-        - PASSWORD=secret
-        - JWT_SECRET=secret
-        - PUBLIC_DOMAIN=yellowdev.fun
+        - PUBLIC_MODE=$MODE
+        - PASSWORD=$PASSWORD
+        - JWT_SECRET=$JWT_SECRET
+        - PUBLIC_DOMAIN=$DOMAIN
     ports:
       - 3000:3000
     environment:
       - ORIGIN=https://app.yellowdev.fun
+      - MODE=subdomain
+      - PASSWORD=secret
+      - JWT_SECRET=secret
+      - DOMAIN=yellowdev.fun
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - $PWD/../server/workspaces:/workspaces

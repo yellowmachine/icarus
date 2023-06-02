@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { PUBLIC_MODE, PUBLIC_DOMAIN } from '$env/static/public';
+    import { env } from '$env/dynamic/public';
 	import type { WORKSPACE } from "./types";
     import { dev } from '$app/environment';
 
     export let data: WORKSPACE["services"][number];
 
-    const base = PUBLIC_DOMAIN
+    const base = env.PUBLIC_DOMAIN
 
     function url(port: number|undefined){
         const http = dev ? 'http': 'https'
-        if(PUBLIC_MODE === 'subdomain')
+        if(env.PUBLIC_MODE === 'subdomain')
             return `${http}://${port}.${base}/`
-        else if(PUBLIC_MODE === 'path')
+        else if(env.PUBLIC_MODE === 'path')
             return `${http}://${base}/${port}/`
         else
             return `${http}://${base}:${port}/`

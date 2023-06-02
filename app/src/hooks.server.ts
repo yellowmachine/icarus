@@ -4,7 +4,7 @@ import { createContext } from '$lib/trpc/context'
 import { createRouteGuard } from 'sveltekit-route-guard'
 import { redirect, type Handle, type RequestEvent } from '@sveltejs/kit'
 import { verify } from 'jsonwebtoken'
-import { JWT_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 const trpcHandle = createTRPCHandle({
  router,
@@ -18,7 +18,7 @@ type User = {
 const getCurrentUser = (event: RequestEvent) => {
     try {
      const token = event.cookies.get('jwt')
-     return verify(token || '', JWT_SECRET) as User
+     return verify(token || '', env.JWT_SECRET) as User
     } catch (_) {
      return null
     }
