@@ -1,7 +1,8 @@
 FROM node:16-bullseye
 
 ARG SSH_KEY
-ENV SSH_KEY=$SSH_KEY
+ARG USER
+ARG EMAIL
 
 RUN mkdir /root/.ssh/
 
@@ -22,6 +23,9 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 RUN npm install -g pnpm
 COPY config.yaml /root/.config/code-server/
+
+RUN git config --global user.name "$USER"
+RUN git config --global user.email "$EMAIL"
 
 WORKDIR /project
 
