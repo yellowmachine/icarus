@@ -149,7 +149,7 @@ async function isRunning(name: string){
     return ps.services.length > 0
 }
 
-async function createWorkspace(name: string, specification: string, readme: string){
+async function createWorkspace(name: string, readme: string, specification: string){
     await mkdir(name)
     await writeReadme(name, readme)
     await writeSpecification(name, specification)
