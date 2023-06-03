@@ -7,6 +7,7 @@
 
     const dispatch = createEventDispatcher<{ 
         up:{workspace:string},
+        cloneAndUp:{workspace:string},
         down:{workspace:string},
         delete:{workspace:string}, 
         edit:{workspace:string}
@@ -20,6 +21,12 @@
 
     function up(){
         dispatch('up', {
+			workspace: data.workspace
+		});
+    }
+
+    function cloneAndUp(){
+        dispatch('cloneAndUp', {
 			workspace: data.workspace
 		});
     }
@@ -44,6 +51,9 @@
     {#if data.isValid}
         <button on:click={up} class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
             Up
+        </button>
+        <button on:click={cloneAndUp} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Clone & up
         </button>
     {:else}
         <div class="text-red font-bold">Errors in config file</div>

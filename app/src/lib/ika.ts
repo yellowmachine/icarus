@@ -5,6 +5,7 @@ import  path from 'path';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
+import { uuid } from 'uuidv4';
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
@@ -142,6 +143,15 @@ async function isWorkspace(name: string){
 
 export async function upWorkspace(workspace: string){
     return await cmd('up', `${rootPath}/${workspace}`)
+}
+
+export async function cloneAndUpWorkspace(workspace: string){
+    const p = `${rootPath}/${workspace}`
+    const readme = await readReadme(p)
+    const specification = await readSpecification(p)
+    const name = workspace + '_tmp_' + uuid()
+    await createWorkspace(name, readme, specification)
+    return await cmd('up', `${rootPath}/${name}`)
 }
 
 export async function downWorkspace(workspace: string, options?: string[]){

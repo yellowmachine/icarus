@@ -2,7 +2,7 @@
 import type { Context } from '$lib/trpc/context';
 import { initTRPC } from '@trpc/server';
 import {z} from 'zod'
-import { getStates, upWorkspace, downWorkspace, saveWorkspace, deleteWorkspace } from '$lib/ika';
+import { getStates, upWorkspace, downWorkspace, saveWorkspace, deleteWorkspace, cloneAndUpWorkspace } from '$lib/ika';
 import { TRPCError } from '@trpc/server';
 
 export const t = initTRPC.context<Context>().create();
@@ -22,6 +22,12 @@ export const router = t.router({
     z.object({workspace: z.string()})
   ).mutation(async ({ input }) => {
     await upWorkspace(input.workspace)
+    return await getStates()
+  }),
+  cloneAndUp: authProcedure.input(
+    z.object({workspace: z.string()})
+  ).mutation(async ({ input }) => {
+    await cloneAndUpWorkspace(input.workspace)
     return await getStates()
   }),
   down: authProcedure.input(

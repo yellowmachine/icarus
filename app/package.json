@@ -45,6 +45,7 @@
 		"svelte-highlight": "^7.3.0",
 		"sveltekit-route-guard": "^1.0.5",
 		"trpc-sveltekit": "^3.5.7",
+		"uuidv4": "^6.2.13",
 		"zod": "^3.21.4"
 	}
 }

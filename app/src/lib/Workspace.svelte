@@ -36,7 +36,7 @@
         }, 3000);
     }
 
-    async function cmd(c: "up"|"down"|"delete", workspace: string){
+    async function cmd(c: "up"|"down"|"delete"|"cloneAndUp", workspace: string){
         try{
             loading = true;
             if(c === 'up') polling()
@@ -59,6 +59,10 @@
         await cmd("up", event.detail.workspace)
     }
 
+    async function onCloneAndUp(event: CustomEvent<{workspace:string}>){
+        await cmd("cloneAndUp", event.detail.workspace)
+    }
+
     async function onDown(event: CustomEvent<{workspace:string}>){
         await cmd("down", event.detail.workspace)
     }
@@ -74,5 +78,5 @@
 <H code={data.readme} language={md} />
 <H code={data.specification} language={yaml} />
 <Services data={data.services} />
-<Actions on:edit on:up={onUp} on:down={onDown} on:delete={onDelete} {loading} {data} />
+<Actions on:edit on:up={onUp} on:down={onDown} on:delete={onDelete} on:cloneAndUp={onCloneAndUp} {loading} {data} />
 <div class="bg-red-500 text-white">{error}</div>
