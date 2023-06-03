@@ -76,11 +76,12 @@
       </div>
 </main>
 
-<Modal bind:showModal>
-	<h2 slot="header">
-		modal
-		<small><em>adjective</em> mod·al \ˈmō-dəl\</small>
-	</h2>
-
-    <button on:click={()=>_delete()}>Delete implies `docker compose down -v`; Yes?</button>
+<Modal bind:showModal doIt={_delete}>
+    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+            <div class="mt-2">
+                <p class="text-sm text-gray-500">Are you sure you want to delete workspace? It will `docker compose down -v`.</p>
+            </div>
+        </div>
+    </div>
 </Modal>
