@@ -172,7 +172,7 @@ export async function saveWorkspace(name: string, readme: string, specification:
 export async function deleteWorkspace(name: string){
     const p = `${rootPath}/${name}`
     if(!isWorkspace(p)) throw "Workspace doesn't exist"
-    await downWorkspace(p, ["-v"])
+    await downWorkspace(name, ["-v"])
     await rm(p, { recursive: true, force: true });
     return {done: true}
 }
