@@ -8,7 +8,9 @@ import { env } from '$env/dynamic/private'
 
 const trpcHandle = createTRPCHandle({
  router,
- createContext
+ createContext,
+ onError: ({ type, path, error }) =>
+    console.error(`Encountered error while trying to process ${type} @ ${path}:`, error)
 })
 
 type User = {
