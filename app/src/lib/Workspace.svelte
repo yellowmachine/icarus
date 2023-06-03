@@ -13,6 +13,9 @@
         state:{state:WORKSPACE[]}
     }>()
 
+    const dispatchDelete = createEventDispatcher<{ 
+        delete: () => Promise<void>
+    }>()
 
     export let data: WORKSPACE;
     let loading = false;
@@ -61,7 +64,8 @@
     }
 
     async function onDelete(event: CustomEvent<{workspace:string}>){
-        await cmd("delete", event.detail.workspace)
+        dispatchDelete('delete', () => cmd("delete", event.detail.workspace))
+        //await cmd("delete", event.detail.workspace)
     }
 
 </script>

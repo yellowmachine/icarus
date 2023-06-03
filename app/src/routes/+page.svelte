@@ -7,6 +7,9 @@
     import Console from '$lib/Console.svelte';
     import { page } from '$app/stores';
     import { trpc } from '$lib/trpc/client';
+    import Modal from '$lib/Modal.svelte';
+
+    let showModal = false;
 
     export let data: PageData;
     
@@ -55,13 +58,29 @@
         }
     }
 
+    let _delete: () => Promise<void>
+
+    function onDelete(event: CustomEvent<()=>Promise<void>>){
+        _delete = event.detail
+        showModal = true
+    }
+
 </script>
 
 <main>
       <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute top-0 right-0" on:click={refresh}>Manually refresh</button>
       <div class="grid grid-cols-3 gap-4">
-        <Workspaces on:edit={onEdit} on:state={onState} data={state} />
+        <Workspaces on:edit={onEdit} on:state={onState} data={state} on:delete={onDelete} />
         <Form workspace={workspace} on:save={refresh} />
         <Console {lines} />
       </div>
 </main>
+
+<Modal bind:showModal>
+	<h2 slot="header">
+		modal
+		<small><em>adjective</em> mod·al \ˈmō-dəl\</small>
+	</h2>
+
+    <button on:click={()=>_delete()}>Delete implies `docker compose down -v`; Yes?</button>
+</Modal>

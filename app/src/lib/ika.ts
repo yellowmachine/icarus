@@ -13,19 +13,23 @@ console.log(rootPath)
 export const workspaceEmitter = new EventEmitter();
 
 async function _cmd(command: string[], workspace: string) {
-    let p = spawn(command[0], command.slice(1), { cwd: `${workspace}`});
-    
-    return new Promise((resolveFunc) => {
-      p.stdout.on("data", (data: string) => {
-        workspaceEmitter.emit('log:out', data.toString())
-      });
-      p.stderr.on("data", (data: string) => {
-        workspaceEmitter.emit('log:err', data.toString())
-      });
-      p.on("exit", (code: number) => {
-        resolveFunc(code);
-      });
-    });
+    try{
+        let p = spawn(command[0], command.slice(1), { cwd: `${workspace}`});
+            
+        return new Promise((resolveFunc) => {
+            p.stdout.on("data", (data: string) => {
+                workspaceEmitter.emit('log:out', data.toString())
+            });
+            p.stderr.on("data", (data: string) => {
+                workspaceEmitter.emit('log:err', data.toString())
+            });
+            p.on("exit", (code: number) => {
+                resolveFunc(code);
+            });
+        });
+    }catch(err){
+        return Promise.reject(new Error('fail on _cmd:' + command + ', ' + workspace));
+    }
 }
   
 
