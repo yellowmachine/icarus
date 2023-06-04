@@ -1,21 +1,30 @@
 import { assert, expect, test } from 'vitest'
+import { parsePort, getEnv } from './ika'
 
-// Edit an assertion and save to see HMR in action
-
-test('Math.sqrt()', () => {
-  expect(Math.sqrt(4)).toBe(2)
-  expect(Math.sqrt(144)).toBe(12)
-  expect(Math.sqrt(2)).toBe(Math.SQRT2)
+test('parse port empty', () => {
+    assert.equal(parsePort(""), "")
 })
 
-test('JSON', () => {
-  const input = {
-    foo: 'hello',
-    bar: 'world',
-  }
+test('parse port $A:8080', () => {
+    assert.equal(parsePort("$A:8080"), "$A")
+})
 
-  const output = JSON.stringify(input)
+test('parse port 8080:8080', () => {
+    assert.equal(parsePort("8080:8080"), "")
+})
 
-  expect(output).eq('{"foo":"hello","bar":"world"}')
-  assert.deepEqual(JSON.parse(output), input, 'matches original')
+test('get env empty', () => {
+    assert.deepEqual(getEnv([""]), {})
+})
+
+test('get env empty two empty items', () => {
+    assert.deepEqual(getEnv(["", ""]), {})
+})
+
+test('get env one item', () => {
+    assert.deepEqual(getEnv(["$A:8080"]), {A: "9000"})
+})
+
+test('get env two items', () => {
+    assert.deepEqual(getEnv(["$A:8080", "$B:3000"]), {A: "9001", B: undefined})
 })

@@ -41,7 +41,7 @@ async function updateAllSubdomainsAvailable(){
     availableSubdomains = new Set(diff)
 }
 
-updateAllSubdomainsAvailable()
+//updateAllSubdomainsAvailable()
 
 function getPortFromSubdomain(subdomain: string){
     return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
