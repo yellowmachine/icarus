@@ -5,19 +5,15 @@ import  path from 'path';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
-import { uuid } from 'uuidv4';
+import { regex, uuid } from 'uuidv4';
 import domains from '../domains.json'
+import { parse } from 'yaml'
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
 console.log(rootPath)
 
 export const allSubdomains: Record<string, string> = domains;
-/*
-{
-    "8080": "xyz",
-    "5173": "abc"
-}*/
 
 const allSubdomainsNames = Object.values(allSubdomains)
 
@@ -38,13 +34,13 @@ async function getAllSubdomainsInUse(){
     }, [] as string[])
 }
 
-async function getAllSubdomainsAvailable(){
+async function updateAllSubdomainsAvailable(){
     const inUse = await getAllSubdomainsInUse()
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
     availableSubdomains = new Set(diff)
 }
 
-getAllSubdomainsAvailable()
+updateAllSubdomainsAvailable()
 
 function getPortFromSubdomain(subdomain: string){
     return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
@@ -62,7 +58,7 @@ function getSubdomain(){
 
 export const workspaceEmitter = new EventEmitter();
 
-async function _cmd(command: string[], workspace: string, env?: Record<string, string>) {
+async function _cmd(command: string[], workspace: string, env?: Record<string, string|undefined>) {
     try{
         let p = spawn(command[0], command.slice(1), { env, cwd: `${workspace}`});
             
@@ -83,15 +79,11 @@ async function _cmd(command: string[], workspace: string, env?: Record<string, s
 }
   
 
-export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: string, options?: string[]){
+export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: string, options?: string[], env?: Record<string, string|undefined>){
     if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
     
     try{
-        let env = {};
-        if(cmd === 'up') env = { SUBDOMAIN1: getSubdomain(), SUBDOMAIN2: getSubdomain()}
-
         const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace, env)
-        await getAllSubdomainsAvailable()
         return { exitCode: 0, data: result}
     }catch(err){
         console.log(cmd, err)
@@ -194,8 +186,33 @@ async function isWorkspace(name: string){
     }
 }
 
+function getEnv(ports: string[]){
+    const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
+    const ret: Record<string, string|undefined> = {}
+    envs.forEach(k => {
+        ret[k] = getSubdomain()
+    })
+    return ret
+}
+
+const patt = /\$[A-H]/
+
+function parsePort(p: string){
+    const v = patt.exec(p)
+    if(v !== null) return v[0]
+    else return ""
+}
+
 export async function upWorkspace(workspace: string){
-    return await cmd('up', `${rootPath}/${workspace}`)
+    const p = `${rootPath}/${workspace}`
+    const specification = await readSpecification(p)
+    const j = parse(specification) as {services: {ports: string[]}[]}
+    await updateAllSubdomainsAvailable()
+    const _env = Object.values(j.services).map((x) => getEnv(x.ports))
+    const env = Object.assign({}, ..._env)
+    const ret = await cmd('up', p, [], env)
+    //await updateAllSubdomainsAvailable()
+    return ret
 }
 
 export async function cloneAndUpWorkspace(workspace: string){
@@ -209,7 +226,9 @@ export async function cloneAndUpWorkspace(workspace: string){
 }
 
 export async function downWorkspace(workspace: string, options?: string[]){
-    return await cmd('down', `${rootPath}/${workspace}`, options)
+    const ret = await cmd('down', `${rootPath}/${workspace}`, options)
+    await updateAllSubdomainsAvailable()
+    return ret
 }
 
 async function isRunning(name: string){
