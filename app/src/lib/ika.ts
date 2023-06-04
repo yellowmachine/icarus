@@ -187,7 +187,7 @@ async function isWorkspace(name: string){
     }
 }
 
-function getEnv(ports: string[]){
+export function getEnv(ports: string[]){
     const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
     const ret: Record<string, string|undefined> = {}
     envs.forEach(k => {
@@ -198,7 +198,7 @@ function getEnv(ports: string[]){
 
 const patt = /\$[A-H]/
 
-function parsePort(p: string){
+export function parsePort(p: string){
     const v = patt.exec(p)
     if(v !== null) return v[0]
     else return ""
