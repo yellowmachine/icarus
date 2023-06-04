@@ -9,10 +9,11 @@
 
     function url(port: number|undefined){
         const http = dev ? 'http': 'https'
+        const endPort = dev ? ":3001" : ""
         if(env.PUBLIC_MODE === 'subdomain')
-            return `${http}://${port}.${base}/`
+            return `${http}://${port}.${base}${endPort}/`
         else if(env.PUBLIC_MODE === 'path')
-            return `${http}://${base}/${port}/`
+            return `${http}://${base}${endPort}/${port}/`
         else
             return `${http}://${base}:${port}/`
     }
