@@ -6,16 +6,65 @@ import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
 import { uuid } from 'uuidv4';
+import domains from '../domains.json'
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
 console.log(rootPath)
 
+export const allSubdomains: Record<string, string> = domains;
+/*
+{
+    "8080": "xyz",
+    "5173": "abc"
+}*/
+
+const allSubdomainsNames = Object.values(allSubdomains)
+
+let availableSubdomains = new Set([...allSubdomainsNames])
+
+async function getAllSubdomainsInUse(){
+    const state = await getStates()
+    const ports: number[] = []
+    for(let s of state){
+        if(s.services.length > 0){
+            let _ports = s.services.map(x => x.ports).flat().map(x => x.exposed.port)
+            ports.concat(_ports)
+        }
+    }
+    return ports.reduce((ret, p) => {
+        ret.push(allSubdomains[`${p}`])
+        return ret
+    }, [] as string[])
+}
+
+async function getAllSubdomainsAvailable(){
+    const inUse = await getAllSubdomainsInUse()
+    const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
+    availableSubdomains = new Set(diff)
+}
+
+getAllSubdomainsAvailable()
+
+function getPortFromSubdomain(subdomain: string){
+    return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
+}
+
+function getSubdomain(){
+    const [first] = availableSubdomains;
+    if(first){
+        availableSubdomains.delete(first)
+        return getPortFromSubdomain(first)
+    }else{
+        return undefined
+    }
+}
+
 export const workspaceEmitter = new EventEmitter();
 
-async function _cmd(command: string[], workspace: string) {
+async function _cmd(command: string[], workspace: string, env?: Record<string, string>) {
     try{
-        let p = spawn(command[0], command.slice(1), { cwd: `${workspace}`});
+        let p = spawn(command[0], command.slice(1), { env, cwd: `${workspace}`});
             
         return new Promise((resolveFunc) => {
             p.stdout.on("data", (data: string) => {
@@ -38,7 +87,11 @@ export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: strin
     if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
     
     try{
-        const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace)
+        let env = {};
+        if(cmd === 'up') env = { SUBDOMAIN1: getSubdomain(), SUBDOMAIN2: getSubdomain()}
+
+        const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace, env)
+        await getAllSubdomainsAvailable()
         return { exitCode: 0, data: result}
     }catch(err){
         console.log(cmd, err)
