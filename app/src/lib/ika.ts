@@ -5,9 +5,10 @@ import  path from 'path';
 import { EventEmitter } from 'node:events';
 import type { WORKSPACE } from './types'
 import { dev } from '$app/environment';
-import { regex, uuid } from 'uuidv4';
+import { uuid } from 'uuidv4';
 import domains from '../domains.json'
 import { parse } from 'yaml'
+import { Mutex } from 'async-mutex';
 
 const rootPath = dev ? '../server/workspaces': "/workspaces"
 
@@ -203,7 +204,17 @@ function parsePort(p: string){
     else return ""
 }
 
+const mutex = new Mutex();
+
 export async function upWorkspace(workspace: string){
+    return await mutex.runExclusive(async () => _upWorkspace(workspace))
+}
+
+export async function downWorkspace(workspace: string, options?: string[]){
+    return await mutex.runExclusive(async () => _downWorkspace(workspace, options))
+}
+
+export async function _upWorkspace(workspace: string){
     const p = `${rootPath}/${workspace}`
     const specification = await readSpecification(p)
     const j = parse(specification) as {services: {ports: string[]}[]}
@@ -225,7 +236,7 @@ export async function cloneAndUpWorkspace(workspace: string){
     return await cmd('up', cloned)
 }
 
-export async function downWorkspace(workspace: string, options?: string[]){
+export async function _downWorkspace(workspace: string, options?: string[]){
     const ret = await cmd('down', `${rootPath}/${workspace}`, options)
     await updateAllSubdomainsAvailable()
     return ret
