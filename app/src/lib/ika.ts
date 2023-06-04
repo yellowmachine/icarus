@@ -36,21 +36,23 @@ async function getAllSubdomainsInUse(){
 export async function getAllSubdomainsAvailable(){
     const inUse = await getAllSubdomainsInUse()
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
-    return new Set(diff)
+    return diff //new Set(diff)
 }
 
 function getPortFromSubdomain(subdomain: string){
     return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
 }
 
-function getSubdomain(available: Set<string>){
-    const [first] = available
+/*
+function getSubdomain(available: string[]){
+    const first = available[0]
     if(first){
         return getPortFromSubdomain(first)
     }else{
         return undefined
     }
 }
+*/
 
 export const workspaceEmitter = new EventEmitter();
 
@@ -182,11 +184,11 @@ async function isWorkspace(name: string){
     }
 }
 
-export async function getEnv(ports: string[], available: Set<string>){
+export function getEnv(ports: string[], available: string[]){
     const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
     const ret: Record<string, string|undefined> = {}
-    envs.forEach(async k => {
-        ret[k] = getSubdomain(available)
+    envs.forEach(async (k, i) => {
+        ret[k] = getPortFromSubdomain(available[i])
     })
     return ret
 }
