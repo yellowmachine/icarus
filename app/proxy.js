@@ -1,5 +1,6 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const _domains = require('./src/domains.json')
 
 const app = express();
 
@@ -9,10 +10,6 @@ const flip = (data) => Object.fromEntries(
       .map(([key, value]) => [value, key])
     );
 
-const _domains = {
-    "8080": "yellow-elephant",
-    "5174": "angry-fridge"
-}
 
 const domains = flip(_domains)
 
