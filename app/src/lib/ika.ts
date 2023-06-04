@@ -18,8 +18,6 @@ export const allSubdomains: Record<string, string> = domains;
 
 const allSubdomainsNames = Object.values(allSubdomains)
 
-let availableSubdomains = new Set([...allSubdomainsNames])
-
 async function getAllSubdomainsInUse(){
     const state = await getStates()
     const ports: number[] = []
@@ -35,22 +33,19 @@ async function getAllSubdomainsInUse(){
     }, [] as string[])
 }
 
-async function updateAllSubdomainsAvailable(){
+export async function getAllSubdomainsAvailable(){
     const inUse = await getAllSubdomainsInUse()
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
-    availableSubdomains = new Set(diff)
+    return new Set(diff)
 }
-
-//updateAllSubdomainsAvailable()
 
 function getPortFromSubdomain(subdomain: string){
     return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
 }
 
-function getSubdomain(){
-    const [first] = availableSubdomains;
+function getSubdomain(available: Set<string>){
+    const [first] = available
     if(first){
-        availableSubdomains.delete(first)
         return getPortFromSubdomain(first)
     }else{
         return undefined
@@ -187,11 +182,11 @@ async function isWorkspace(name: string){
     }
 }
 
-export function getEnv(ports: string[]){
+export async function getEnv(ports: string[], available: Set<string>){
     const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
     const ret: Record<string, string|undefined> = {}
-    envs.forEach(k => {
-        ret[k] = getSubdomain()
+    envs.forEach(async k => {
+        ret[k] = getSubdomain(available)
     })
     return ret
 }
@@ -210,19 +205,14 @@ export async function upWorkspace(workspace: string){
     return await mutex.runExclusive(async () => _upWorkspace(workspace))
 }
 
-export async function downWorkspace(workspace: string, options?: string[]){
-    return await mutex.runExclusive(async () => _downWorkspace(workspace, options))
-}
-
 export async function _upWorkspace(workspace: string){
     const p = `${rootPath}/${workspace}`
     const specification = await readSpecification(p)
     const j = parse(specification) as {services: {ports: string[]}[]}
-    await updateAllSubdomainsAvailable()
-    const _env = Object.values(j.services).map((x) => getEnv(x.ports))
+    const available = await getAllSubdomainsAvailable()
+    const _env = Object.values(j.services).map( x => getEnv(x.ports, available))
     const env = Object.assign({}, ..._env)
     const ret = await cmd('up', p, [], env)
-    //await updateAllSubdomainsAvailable()
     return ret
 }
 
@@ -236,9 +226,8 @@ export async function cloneAndUpWorkspace(workspace: string){
     return await cmd('up', cloned)
 }
 
-export async function _downWorkspace(workspace: string, options?: string[]){
+export async function downWorkspace(workspace: string, options?: string[]){
     const ret = await cmd('down', `${rootPath}/${workspace}`, options)
-    await updateAllSubdomainsAvailable()
     return ret
 }
 
