@@ -128,23 +128,12 @@ export async function isWorkspace(name: string){
     }
 }
 
-export async function getStates(){    
-    const dirs = await getWorkspaces(rootPath)
-    
-    const states = await Promise.all(
-        dirs.map(async (name) => {
-            return await getWorkspaceState(name)
-        })
-    )
-    return states
-}
-
 export const allSubdomains: Record<string, string> = domains;
 
 const allSubdomainsNames = Object.values(allSubdomains)
 
-export async function getAllSubdomainsInUse(){
-    const state = await getStates()
+export async function getAllSubdomainsInUse(state: WORKSPACE[]){
+    //const state = await getStates()
     const ports: number[] = []
     for(let s of state){
         if(s.services.length > 0){
@@ -159,8 +148,8 @@ export async function getAllSubdomainsInUse(){
 }
 
 
-export async function getAllSubdomainsAvailable(){
-    const inUse = await getAllSubdomainsInUse()
+export async function getAllSubdomainsAvailable(state: WORKSPACE[]){
+    const inUse = await getAllSubdomainsInUse(state)
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
     return diff 
 }

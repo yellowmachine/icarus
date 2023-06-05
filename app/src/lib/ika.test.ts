@@ -1,7 +1,8 @@
 import { assert, expect, test, vi, describe, afterEach } from 'vitest'
 import domains from '../domains.json'
-import { parsePort, getEnv, getStates } from './utils'
+import { parsePort, getEnv } from './utils'
 import * as utils from './utils'
+import { getStates } from './ika'
 
 const available = Object.values(domains)
 
@@ -45,6 +46,13 @@ describe('reading messages', () => {
         dirs.mockImplementation(async ()=>['test-1'])
 
         const x = vi.spyOn(utils, 'getWorkspaceState');
+        x.mockImplementation(async (workspace: string) => ({
+            workspace,
+            readme: 'a',
+            specification: 'b',
+            isValid: false,
+            services: []
+        }) )
 
         const state = await getStates()
 
