@@ -7,6 +7,10 @@ import  path from 'path';
 import { dev } from '$app/environment';
 import domains from '../domains.json'
 
+export const allSubdomains: Record<string, string> = domains;
+
+export const allSubdomainsNames = Object.values(allSubdomains)
+
 export const rootPath = dev ? '../server/workspaces': "/workspaces"
 
 export const workspaceEmitter = new EventEmitter();
@@ -96,14 +100,6 @@ export const getWorkspaceState = async (workspace: string) => {
     return ret
 }
 
-/*
-async function getWorkspace(name: string){
-    const readme = await readReadme(name)
-    const specification = await readSpecification(name)
-    return {readme, specification}
-}
-*/
-
 async function write(dest: string, txt: string){
     await writeFile(dest, txt, "utf8")
 }
@@ -128,10 +124,6 @@ export async function isWorkspace(name: string){
         return false
     }
 }
-
-export const allSubdomains: Record<string, string> = domains;
-
-export const allSubdomainsNames = Object.values(allSubdomains)
 
 export async function getAllSubdomainsInUse(state: WORKSPACE[]){
     let ports: number[] = []

@@ -6,31 +6,36 @@ import {
     readReadme, readSpecification,
     _cmd, cmd, getWorkspaceState, rootPath,
     writeReadme, writeSpecification, getAllSubdomainsAvailable,
-    getEnv, isWorkspace, getWorkspaces
+    getEnv, isWorkspace, getWorkspaces, getSubdomain
 } from './utils';
+import type { WORKSPACE_EXPOSED } from './types';
 
 console.log(rootPath)
 
+const mutex = new Mutex();
+
 export async function getStates(){    
-    const dirs = await getWorkspaces(rootPath)
+    return await mutex.runExclusive(async () =>{
+        const dirs = await getWorkspaces(rootPath)
     
-    const states = await Promise.all(
-        dirs.map(async (name) => {
-            return await getWorkspaceState(name)
-        })
-    )
-    return states
+        const states = await Promise.all(
+            dirs.map(async (name) => {
+                return await getWorkspaceState(name)
+            })
+        )
+        return states
+    })
+}
+
+export async function getExposedStates(){
+    const s = await getStates()
+    const ret = s.map(w => ({...w, services: w.services.map(x => ({...x, ports: x.ports.map(y => ({...y, exposed: {port: getSubdomain(y.exposed.port)}}))}))}))
+    return ret as WORKSPACE_EXPOSED[]
 }
 
 /// WORKSPACE
 
-const mutex = new Mutex();
-
 export async function upWorkspace(workspace: string){
-    return await mutex.runExclusive(async () => _upWorkspace(workspace))
-}
-
-export async function _upWorkspace(workspace: string){
     const p = `${rootPath}/${workspace}`
     const specification = await readSpecification(p)
     const j = parse(specification) as {services: {ports: string[]}[]}
