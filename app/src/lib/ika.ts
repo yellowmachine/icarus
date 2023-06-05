@@ -6,7 +6,7 @@ import {
     readReadme, readSpecification,
     _cmd, cmd, getWorkspaceState, rootPath,
     writeReadme, writeSpecification, getAllSubdomainsAvailable,
-    getEnv, isWorkspace, getWorkspaces, getSubdomain
+    getEnv, isWorkspace, getWorkspaceNames, getSubdomain
 } from './utils';
 import type { WORKSPACE_EXPOSED } from './types';
 
@@ -16,7 +16,7 @@ const mutex = new Mutex();
 
 export async function getStates(){    
     return await mutex.runExclusive(async () =>{
-        const dirs = await getWorkspaces(rootPath)
+        const dirs = await getWorkspaceNames(rootPath)
     
         const states = await Promise.all(
             dirs.map(async (name) => {

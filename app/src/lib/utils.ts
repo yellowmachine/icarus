@@ -27,7 +27,7 @@ export async function readSpecification(name: string){
     return await read(`${name}/docker-compose.yml`)
 }
 
-export const getWorkspaces = async (source: string) =>
+export const getWorkspaceNames = async (source: string) =>
   (await readdir(source, { withFileTypes: true }))
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
@@ -159,7 +159,6 @@ const flip = (data: Record<string, string>) => Object.fromEntries(
 function getPortFromSubdomain(subdomain: string){
     const fliped = flip(allSubdomains)
     return fliped[subdomain]
-    //return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
 }
 
 export function getEnv(ports: string[], available: string[]){

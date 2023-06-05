@@ -61,7 +61,7 @@ describe('reading messages', () => {
     })
 
     test('get states', async () => {
-        const dirs = vi.spyOn(utils, 'getWorkspaces');
+        const dirs = vi.spyOn(utils, 'getWorkspaceNames');
         dirs.mockImplementation(async ()=>['test-1'])
 
         const s = state_empty[0]
