@@ -1,23 +1,16 @@
 import { assert, expect, test, vi, describe, afterEach } from 'vitest'
-import { parsePort, getEnv } from './ika'
-//import { getWorkspaceState  } from './ika'
-import * as exports from './ika'
 import domains from '../domains.json'
+import { parsePort, getEnv, getStates } from './ika'
+import * as utils from './utils'
 
 const available = Object.values(domains)
 
+
 describe('reading messages', () => {
+    
     afterEach(() => {
       vi.restoreAllMocks()
     })
-
-    vi.spyOn(exports, 'getWorkspaceState').mockImplementation(async (workspace: string) => ({
-        workspace,
-        readme: "",
-        specification: "",
-        services: [],
-        isValid: false
-    }))
 
     test('parse port empty', () => {
         assert.equal(parsePort(""), "")
@@ -45,6 +38,23 @@ describe('reading messages', () => {
     
     test('get env two items', () => {
         assert.deepEqual(getEnv(["$A:8080", "$B:3000"], available), {A: "9000", B: "9001"})
+    })
+
+    test('get states', async () => {
+        const dirs = vi.spyOn(utils, 'getWorkspaces');
+        dirs.mockImplementation(async ()=>['test-1'])
+
+        const x = vi.spyOn(utils, 'getWorkspaceState');
+
+        const state = await getStates()
+
+        assert.deepEqual(state, [{
+            workspace: 'test-1',
+            readme: "a",
+            specification: "b",
+            isValid: false,
+            services: []
+        }])
     })
 
 })
