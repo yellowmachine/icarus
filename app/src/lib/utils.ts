@@ -130,17 +130,17 @@ export async function isWorkspace(name: string){
 
 export const allSubdomains: Record<string, string> = domains;
 
-const allSubdomainsNames = Object.values(allSubdomains)
+export const allSubdomainsNames = Object.values(allSubdomains)
 
 export async function getAllSubdomainsInUse(state: WORKSPACE[]){
-    //const state = await getStates()
-    const ports: number[] = []
+    let ports: number[] = []
     for(let s of state){
         if(s.services.length > 0){
             let _ports = s.services.map(x => x.ports).flat().map(x => x.exposed.port)
-            ports.concat(_ports)
+            ports = ports.concat(_ports)
         }
     }
+
     return ports.reduce((ret, p) => {
         ret.push(allSubdomains[`${p}`])
         return ret
