@@ -1,6 +1,13 @@
 import { readdir, readFile, writeFile, access, rm, mkdir } from 'fs/promises';
 import { spawn } from "child_process";
 import { EventEmitter } from 'node:events';
+import { v2 as compose } from 'docker-compose';
+import type { WORKSPACE } from './types';
+import  path from 'path';
+import { dev } from '$app/environment';
+import domains from '../domains.json'
+
+export const rootPath = dev ? '../server/workspaces': "/workspaces"
 
 export const workspaceEmitter = new EventEmitter();
 
@@ -23,21 +30,158 @@ export const getWorkspaces = async (source: string) =>
 
 
 export async function _cmd(command: string[], workspace: string, env?: Record<string, string|undefined>) {
-        try{
-            let p = spawn(command[0], command.slice(1), { env, cwd: `${workspace}`});
-                
-            return new Promise((resolveFunc) => {
-                p.stdout.on("data", (data: string) => {
-                    workspaceEmitter.emit('log:out', data.toString())
-                });
-                p.stderr.on("data", (data: string) => {
-                    workspaceEmitter.emit('log:err', data.toString())
-                });
-                p.on("exit", (code: number) => {
-                    resolveFunc(code);
-                });
+    try{
+        let p = spawn(command[0], command.slice(1), { env, cwd: `${workspace}`});
+            
+        return new Promise((resolveFunc) => {
+            p.stdout.on("data", (data: string) => {
+                workspaceEmitter.emit('log:out', data.toString())
             });
-        }catch(err){
-            return Promise.reject(new Error('fail on _cmd:' + command + ', ' + workspace));
+            p.stderr.on("data", (data: string) => {
+                workspaceEmitter.emit('log:err', data.toString())
+            });
+            p.on("exit", (code: number) => {
+                resolveFunc(code);
+            });
+        });
+    }catch(err){
+        return Promise.reject(new Error('fail on _cmd:' + command + ', ' + workspace));
+    }
+}
+
+export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: string, options?: string[], env?: Record<string, string|undefined>){
+    if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
+    
+    try{
+        const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace, env)
+        return { exitCode: 0, data: result}
+    }catch(err){
+        console.log(cmd, err)
+        return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}
+    }
+}
+
+export async function cmdCompose(cmd: "ps" | "upAll" | "down" | "config", workspace: string, options?: string[]){
+    
+    try{
+        const res = await compose[cmd]({
+            cwd: workspace,
+            commandOptions: options
+        })
+        return res
+    }
+    catch(err){
+        console.log(cmd, err)
+        return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}
+    }
+}
+
+
+export const getWorkspaceState = async (workspace: string) => {
+    const p = path.join(rootPath, workspace)
+    // @ts-ignore
+    const services = (await cmd('ps', p)).data.services
+    const readme = await readReadme(p)
+    const specification = await readSpecification(p)
+    const configError = (await cmd('config', p)).exitCode
+    
+    const ret: WORKSPACE = {
+        workspace,
+        readme,
+        specification,
+        isValid: configError === 0 ? true: false,
+        services
+    }
+
+    return ret
+}
+
+async function getWorkspace(name: string){
+    const readme = await readReadme(name)
+    const specification = await readSpecification(name)
+    return {readme, specification}
+}
+
+
+async function write(dest: string, txt: string){
+    await writeFile(dest, txt, "utf8")
+}
+
+export async function writeReadme(name: string, txt: string){
+    await write(`${name}/README`, txt)
+}
+
+export async function writeSpecification(name: string, txt: string){
+    await write(`${name}/docker-compose.yml`, txt)
+}
+
+export async function isValidConfig(name: string){
+    return await cmd("config", name)
+}
+
+export async function isWorkspace(name: string){
+    try{
+        await access(name)
+        return true
+    }catch{
+        return false
+    }
+}
+
+export async function getStates(){    
+    const dirs = await getWorkspaces(rootPath)
+    
+    const states = await Promise.all(
+        dirs.map(async (name) => {
+            return await getWorkspaceState(name)
+        })
+    )
+    return states
+}
+
+export const allSubdomains: Record<string, string> = domains;
+
+const allSubdomainsNames = Object.values(allSubdomains)
+
+export async function getAllSubdomainsInUse(){
+    const state = await getStates()
+    const ports: number[] = []
+    for(let s of state){
+        if(s.services.length > 0){
+            let _ports = s.services.map(x => x.ports).flat().map(x => x.exposed.port)
+            ports.concat(_ports)
         }
     }
+    return ports.reduce((ret, p) => {
+        ret.push(allSubdomains[`${p}`])
+        return ret
+    }, [] as string[])
+}
+
+
+export async function getAllSubdomainsAvailable(){
+    const inUse = await getAllSubdomainsInUse()
+    const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
+    return diff 
+}
+
+function getPortFromSubdomain(subdomain: string){
+    return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
+}
+
+export function getEnv(ports: string[], available: string[]){
+    const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
+    const ret: Record<string, string|undefined> = {}
+    envs.forEach(async (k, i) => {
+        ret[k] = getPortFromSubdomain(available[i])
+    })
+    return ret
+}
+
+const patt = /\$[A-H]/
+
+export function parsePort(p: string){
+    const v = patt.exec(p)
+    if(v !== null) return v[0]
+    else return ""
+}

@@ -1,153 +1,17 @@
-import { readFile, writeFile, access, rm, mkdir } from 'fs/promises';
-import { v2 as compose } from 'docker-compose';
-import  path from 'path';
-import type { WORKSPACE } from './types'
-import { dev } from '$app/environment';
+import { writeFile, access, rm, mkdir } from 'fs/promises';
 import { uuid } from 'uuidv4';
-import domains from '../domains.json'
 import { parse } from 'yaml'
 import { Mutex } from 'async-mutex';
-import { readReadme, readSpecification, getWorkspaces, _cmd } from './utils';
-
-const rootPath = dev ? '../server/workspaces': "/workspaces"
+import { 
+    readReadme, readSpecification,
+    _cmd, cmd, getWorkspaceState, rootPath,
+    writeReadme, writeSpecification, getAllSubdomainsAvailable,
+    getEnv, isWorkspace
+} from './utils';
 
 console.log(rootPath)
 
-export const allSubdomains: Record<string, string> = domains;
-
-const allSubdomainsNames = Object.values(allSubdomains)
-
-export async function getAllSubdomainsInUse(){
-    const state = await getStates()
-    const ports: number[] = []
-    for(let s of state){
-        if(s.services.length > 0){
-            let _ports = s.services.map(x => x.ports).flat().map(x => x.exposed.port)
-            ports.concat(_ports)
-        }
-    }
-    return ports.reduce((ret, p) => {
-        ret.push(allSubdomains[`${p}`])
-        return ret
-    }, [] as string[])
-}
-
-export async function getAllSubdomainsAvailable(){
-    const inUse = await getAllSubdomainsInUse()
-    const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
-    return diff 
-}
-
-function getPortFromSubdomain(subdomain: string){
-    return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
-}
-  
-export async function cmd(cmd: "ps" | "up" | "down" | "config", workspace: string, options?: string[], env?: Record<string, string|undefined>){
-    if(cmd === 'ps' || cmd === 'config') return await cmdCompose(cmd, workspace, options)
-    
-    try{
-        const result = await _cmd(['docker', 'compose', cmd, ...(options || [])], workspace, env)
-        return { exitCode: 0, data: result}
-    }catch(err){
-        console.log(cmd, err)
-        return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}
-    }
-}
-
-export async function cmdCompose(cmd: "ps" | "upAll" | "down" | "config", workspace: string, options?: string[]){
-    
-    try{
-        const res = await compose[cmd]({
-            cwd: workspace,
-            commandOptions: options
-        })
-        return res
-    }
-    catch(err){
-        console.log(cmd, err)
-        return { exitCode: 1, data: { services: [], error: JSON.stringify(err)}}
-    }
-}
-
-async function write(dest: string, txt: string){
-    await writeFile(dest, txt, "utf8")
-}
-
-async function writeReadme(name: string, txt: string){
-    await write(`${name}/README`, txt)
-}
-
-async function writeSpecification(name: string, txt: string){
-    await write(`${name}/docker-compose.yml`, txt)
-}
-
 /// WORKSPACE
-
-export async function isValidConfig(name: string){
-    return await cmd("config", name)
-}
-
-export async function getStates(){    
-    const dirs = await getWorkspaces(rootPath)
-    
-    const states = await Promise.all(
-        dirs.map(async (name) => {
-            return await getWorkspaceState(name)
-        })
-    )
-    return states
-}
-
-export const getWorkspaceState = async (workspace: string) => {
-    const p = path.join(rootPath, workspace)
-    // @ts-ignore
-    const services = (await cmd('ps', p)).data.services
-    const readme = await readReadme(p)
-    const specification = await readSpecification(p)
-    const configError = (await cmd('config', p)).exitCode
-    
-    const ret: WORKSPACE = {
-        workspace,
-        readme,
-        specification,
-        isValid: configError === 0 ? true: false,
-        services
-    }
-
-    return ret
-}
-
-async function getWorkspace(name: string){
-    const readme = await readReadme(name)
-    const specification = await readSpecification(name)
-    return {readme, specification}
-}
-
-async function isWorkspace(name: string){
-    try{
-        await access(name)
-        return true
-    }catch{
-        return false
-    }
-}
-
-export function getEnv(ports: string[], available: string[]){
-    const envs = ports.map(p => parsePort(p)).filter(x => x !== "").map(x => x?.slice(1))
-    const ret: Record<string, string|undefined> = {}
-    envs.forEach(async (k, i) => {
-        ret[k] = getPortFromSubdomain(available[i])
-    })
-    return ret
-}
-
-const patt = /\$[A-H]/
-
-export function parsePort(p: string){
-    const v = patt.exec(p)
-    if(v !== null) return v[0]
-    else return ""
-}
 
 const mutex = new Mutex();
 

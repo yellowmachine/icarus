@@ -1,6 +1,6 @@
 import { assert, expect, test, vi, describe, afterEach } from 'vitest'
 import domains from '../domains.json'
-import { parsePort, getEnv, getStates } from './ika'
+import { parsePort, getEnv, getStates } from './utils'
 import * as utils from './utils'
 
 const available = Object.values(domains)
