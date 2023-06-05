@@ -1,10 +1,9 @@
-import { assert, expect, test, vi, describe, afterEach } from 'vitest'
-import domains from '../domains.json'
+import { assert, test, vi, describe, afterEach } from 'vitest'
 import { parsePort, getEnv } from './utils'
 import * as utils from './utils'
 import { getStates } from './ika'
 
-const available = Object.values(domains)
+const all = utils.allSubdomainsNames
 
 const state_empty = [{
     workspace: 'test-1',
@@ -15,10 +14,7 @@ const state_empty = [{
 }]
 
 const state_a = [{
-    workspace: 'test-1',
-    readme: "a",
-    specification: "b",
-    isValid: false,
+    ...state_empty[0],
     services: [{
         name: '',
         command: '',
@@ -49,19 +45,19 @@ describe('reading messages', () => {
     })
     
     test('get env empty', () => {
-        assert.deepEqual(getEnv([""], available), {})
+        assert.deepEqual(getEnv([""], all), {})
     })
     
     test('get env empty two empty items', () => {
-        assert.deepEqual(getEnv(["", ""], available), {})
+        assert.deepEqual(getEnv(["", ""], all), {})
     })
     
     test('get env one item', () => {
-        assert.deepEqual(getEnv(["$A:8080"], available), {A: "9000"})
+        assert.deepEqual(getEnv(["$A:8080"], all), {A: "9000"})
     })
     
     test('get env two items', () => {
-        assert.deepEqual(getEnv(["$A:8080", "$B:3000"], available), {A: "9000", B: "9001"})
+        assert.deepEqual(getEnv(["$A:8080", "$B:3000"], all), {A: "9000", B: "9001"})
     })
 
     test('get states', async () => {

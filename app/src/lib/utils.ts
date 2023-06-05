@@ -96,12 +96,13 @@ export const getWorkspaceState = async (workspace: string) => {
     return ret
 }
 
+/*
 async function getWorkspace(name: string){
     const readme = await readReadme(name)
     const specification = await readSpecification(name)
     return {readme, specification}
 }
-
+*/
 
 async function write(dest: string, txt: string){
     await writeFile(dest, txt, "utf8")
@@ -147,6 +148,9 @@ export async function getAllSubdomainsInUse(state: WORKSPACE[]){
     }, [] as string[])
 }
 
+export function getSubdomain(port: number){
+    return allSubdomains[`${port}`]
+}
 
 export async function getAllSubdomainsAvailable(state: WORKSPACE[]){
     const inUse = await getAllSubdomainsInUse(state)
@@ -154,8 +158,16 @@ export async function getAllSubdomainsAvailable(state: WORKSPACE[]){
     return diff 
 }
 
+const flip = (data: Record<string, string>) => Object.fromEntries(
+    Object
+      .entries(data)
+      .map(([key, value]) => [value, key])
+    );
+
 function getPortFromSubdomain(subdomain: string){
-    return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
+    const fliped = flip(allSubdomains)
+    return fliped[subdomain]
+    //return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
 }
 
 export function getEnv(ports: string[], available: string[]){
