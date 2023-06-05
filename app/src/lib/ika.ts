@@ -18,7 +18,7 @@ export const allSubdomains: Record<string, string> = domains;
 
 const allSubdomainsNames = Object.values(allSubdomains)
 
-async function getAllSubdomainsInUse(){
+export async function getAllSubdomainsInUse(){
     const state = await getStates()
     const ports: number[] = []
     for(let s of state){
@@ -36,23 +36,12 @@ async function getAllSubdomainsInUse(){
 export async function getAllSubdomainsAvailable(){
     const inUse = await getAllSubdomainsInUse()
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
-    return diff //new Set(diff)
+    return diff 
 }
 
 function getPortFromSubdomain(subdomain: string){
     return Object.keys(allSubdomains).find(key => allSubdomains[key] === subdomain);
 }
-
-/*
-function getSubdomain(available: string[]){
-    const first = available[0]
-    if(first){
-        return getPortFromSubdomain(first)
-    }else{
-        return undefined
-    }
-}
-*/
 
 export const workspaceEmitter = new EventEmitter();
 
@@ -150,7 +139,7 @@ export async function getStates(){
     return states
 }
 
-const getWorkspaceState = async (workspace: string) => {
+export const getWorkspaceState = async (workspace: string) => {
     const p = path.join(rootPath, workspace)
     // @ts-ignore
     const services = (await cmd('ps', p)).data.services
