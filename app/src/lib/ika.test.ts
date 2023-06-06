@@ -33,6 +33,20 @@ const state_a = [{
     }]
 }]
 
+
+const state_b = [{
+    ...state_empty[0],
+    services: [{
+        name: '',
+        command: '',
+        state: '',
+        ports: [{exposed: {
+            port: 9000,
+            protocol: ""
+        }}]
+    }]
+}]
+
 describe('reading messages', () => {
     
     afterEach(() => {
@@ -121,5 +135,23 @@ describe('reading messages', () => {
         await _up("../test-1", specification)
 
         expect(m).toBeCalledWith("up", "../test-1", [], {A: "9000"})
+    })
+
+    test("cmd is called with up command and state b (9000)", async () => {
+        const m = vi.spyOn(utils, "cmd")
+        m.mockImplementation(async () => ({
+            exitCode: 0,
+            data: {}
+        }))
+
+        const dirs = vi.spyOn(utils, 'getWorkspaceNames');
+        dirs.mockImplementation(async ()=>['test-1'])
+
+        const ws = vi.spyOn(utils, 'getWorkspaceState');
+        ws.mockImplementation(async (workspace: string) => state_b[0])
+
+        await _up("../test-1", specification)
+
+        expect(m).toBeCalledWith("up", "../test-1", [], {A: "9001"})
     })
 })
