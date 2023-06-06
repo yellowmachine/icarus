@@ -15,16 +15,14 @@ console.log(rootPath)
 const mutex = new Mutex();
 
 export async function getStates(){    
-    return await mutex.runExclusive(async () =>{
-        const dirs = await getWorkspaceNames(rootPath)
-    
-        const states = await Promise.all(
-            dirs.map(async (name) => {
-                return await getWorkspaceState(name)
-            })
-        )
-        return states
-    })
+    const dirs = await getWorkspaceNames(rootPath)
+
+    const states = await Promise.all(
+        dirs.map(async (name) => {
+            return await getWorkspaceState(name)
+        })
+    )
+    return states
 }
 
 export async function getExposedStates(){
@@ -35,16 +33,20 @@ export async function getExposedStates(){
 
 /// WORKSPACE
 
-export async function upWorkspace(workspace: string){
+export async function _up(workspace: string, specification: string){
     const p = `${rootPath}/${workspace}`
-    const specification = await readSpecification(p)
     const j = parse(specification) as {services: {ports: string[]}[]}
     const state = await getStates()
     const available = await getAllSubdomainsAvailable(state)
     const _env = Object.values(j.services).map( x => getEnv(x.ports, available))
     const env = Object.assign({}, ..._env)
-    const ret = await cmd('up', p, [], env)
-    return ret
+    return await cmd('up', p, [], env)  
+}
+
+export async function upWorkspace(workspace: string){
+    const p = `${rootPath}/${workspace}`
+    const specification = await readSpecification(p)
+    return await mutex.runExclusive(() => _up(workspace, specification))
 }
 
 export async function cloneAndUpWorkspace(workspace: string){

@@ -7,7 +7,15 @@ import  path from 'path';
 import { dev } from '$app/environment';
 import domains from '../domains.json'
 
+
+const flip = (data: Record<string, string>) => Object.fromEntries(
+    Object
+      .entries(data)
+      .map(([key, value]) => [value, key])
+    );
+
 export const allSubdomains: Record<string, string> = domains;
+const flipedAllSubdomains = flip(allSubdomains)
 
 export const allSubdomainsNames = Object.values(allSubdomains)
 
@@ -150,15 +158,8 @@ export async function getAllSubdomainsAvailable(state: WORKSPACE[]){
     return diff 
 }
 
-const flip = (data: Record<string, string>) => Object.fromEntries(
-    Object
-      .entries(data)
-      .map(([key, value]) => [value, key])
-    );
-
 function getPortFromSubdomain(subdomain: string){
-    const fliped = flip(allSubdomains)
-    return fliped[subdomain]
+    return flipedAllSubdomains[subdomain]
 }
 
 export function getEnv(ports: string[], available: string[]){
