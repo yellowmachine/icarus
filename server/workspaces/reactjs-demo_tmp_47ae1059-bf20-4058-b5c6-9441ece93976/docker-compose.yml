@@ -1,0 +1,5 @@
+services:
+  code: 
+    image: codenode
+    ports: 
+      - $A:8080

@@ -8,17 +8,25 @@
     const base = env.PUBLIC_DOMAIN
 
     function url(port: string|number|undefined){
-        //console.log('dev:', dev)
-        //const _dev = true;
-        const http = dev ? 'http': 'https'
         const endPort = dev ? ":3001" : ""
         
-        if(env.PUBLIC_MODE === 'subdomain')
-            return `${http}://${port}.${base}${endPort}/`
-        else if(env.PUBLIC_MODE === 'path')
-            return `${http}://${base}${endPort}/${port}/`
-        else
-            return `${http}://${base}:${port}/`
+        if(dev){
+            if(env.PUBLIC_MODE === 'subdomain')
+                return `${port}.${base}${endPort}/`
+            else if(env.PUBLIC_MODE === 'path')
+                return `${base}${endPort}/${port}/`
+            else
+                return `${base}:${port}/`
+        }else{
+            if(env.PUBLIC_MODE === 'subdomain')
+                return `https://${port}.${base}${endPort}/`
+            else if(env.PUBLIC_MODE === 'path')
+                return `https://${base}${endPort}/${port}/`
+            else
+                return `https://${base}:${port}/`
+        }
+
+        
     }
 </script>
 
