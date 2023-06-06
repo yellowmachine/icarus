@@ -19,8 +19,8 @@ const options = {
     changeOrigin: true, 
     ws: true,
     router: function(req) {
-        console.log(req.subdomains)
-        const subdomain = req.subdomains[0]
+        console.log(domains)
+        const subdomain = req.hostname.split('.')[0]
         console.log(subdomain)
         const port = domains[subdomain]
         console.log(port)
