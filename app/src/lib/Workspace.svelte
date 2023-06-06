@@ -1,7 +1,7 @@
 <script lang="ts">
     import yaml from "svelte-highlight/languages/yaml";
     import md from "svelte-highlight/languages/markdown";
-    import type { WORKSPACE } from "./types";
+    import type { WORKSPACE_EXPOSED } from "./types";
     import Services from "./Services.svelte";
 	import Actions from './Actions.svelte';
     import H from "./H.svelte";
@@ -10,14 +10,14 @@
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher<{ 
-        state:{state:WORKSPACE[]}
+        state:{state:WORKSPACE_EXPOSED[]}
     }>()
 
     const dispatchDelete = createEventDispatcher<{ 
         delete: () => Promise<void>
     }>()
 
-    export let data: WORKSPACE;
+    export let data: WORKSPACE_EXPOSED;
     let loading = false;
     let error = ""
 

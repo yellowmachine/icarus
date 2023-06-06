@@ -1,15 +1,17 @@
 <script lang="ts">
     import { env } from '$env/dynamic/public';
-	import type { WORKSPACE } from "./types";
+	import type { WORKSPACE_EXPOSED } from "./types";
     import { dev } from '$app/environment';
 
-    export let data: WORKSPACE["services"][number];
+    export let data: WORKSPACE_EXPOSED["services"][number];
 
     const base = env.PUBLIC_DOMAIN
 
     function url(port: number|undefined){
+        const dev = true;
         const http = dev ? 'http': 'https'
         const endPort = dev ? ":3001" : ""
+        
         if(env.PUBLIC_MODE === 'subdomain')
             return `${http}://${port}.${base}${endPort}/`
         else if(env.PUBLIC_MODE === 'path')

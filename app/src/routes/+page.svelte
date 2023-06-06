@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
     import Workspaces from '$lib/Workspaces.svelte';
-    import type { WORKSPACE } from '$lib/types';
+    import type { WORKSPACE_EXPOSED } from '$lib/types';
     import Form from '$lib/Form.svelte';
     import Console from '$lib/Console.svelte';
     import { page } from '$app/stores';
@@ -13,7 +13,7 @@
 
     export let data: PageData;
     
-    let state: WORKSPACE[];
+    let state: WORKSPACE_EXPOSED[];
     
     $: {
         state = data.ps;
@@ -33,13 +33,13 @@
 
 	onMount(subscribe);
 
-    let workspace: WORKSPACE | null = null
+    let workspace: WORKSPACE_EXPOSED | null = null
 
     function onEdit(event: CustomEvent<{workspace:string}>){
         workspace =  {...state.filter(x => x.workspace === event.detail.workspace)[0]}
     }
 
-    function onState(event: CustomEvent<{state:WORKSPACE[]}>){
+    function onState(event: CustomEvent<{state:WORKSPACE_EXPOSED[]}>){
         state = event.detail.state
     }
 
@@ -69,7 +69,7 @@
 
 <main>
       <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute top-0 right-0" on:click={refresh}>Manually refresh</button>
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-3 gap-5">
         <Workspaces on:edit={onEdit} on:state={onState} data={state} on:delete={onDelete} />
         <Form workspace={workspace} on:save={refresh} />
         <Console {lines} />

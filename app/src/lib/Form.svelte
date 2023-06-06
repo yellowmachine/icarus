@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { WORKSPACE } from './types';
+    import type { WORKSPACE_EXPOSED } from './types';
     import { trpc } from '$lib/trpc/client';
     import { createEventDispatcher } from 'svelte';
 
@@ -7,7 +7,7 @@
         save:{}
     }>()
 
-    export let workspace: WORKSPACE|null;
+    export let workspace: WORKSPACE_EXPOSED|null;
 
     let loading = false;
 

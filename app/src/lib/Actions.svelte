@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { WORKSPACE } from "./types";
+    import type { WORKSPACE_EXPOSED } from "./types";
     import { createEventDispatcher } from 'svelte';
     
-    export let data: WORKSPACE;
+    export let data: WORKSPACE_EXPOSED;
     export let loading: boolean;
 
     const dispatch = createEventDispatcher<{ 

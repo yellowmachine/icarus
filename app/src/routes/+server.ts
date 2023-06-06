@@ -1,4 +1,4 @@
-import { workspaceEmitter } from '../lib/ika';
+import { workspaceEmitter } from '../lib/utils';
 import type { RequestHandler } from './$types';
 
 function enqueue(controller: ReadableStreamDefaultController, msg: string){

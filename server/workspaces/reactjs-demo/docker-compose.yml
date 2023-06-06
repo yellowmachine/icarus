@@ -2,4 +2,4 @@ services:
   code: 
     image: codenode
     ports: 
-      - 8080:8080
+      - $A:8080

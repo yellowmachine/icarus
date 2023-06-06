@@ -1,7 +1,7 @@
 <script lang="ts">
     import Service from './Service.svelte'
-	import type { WORKSPACE } from './types';
-    export let data: WORKSPACE["services"] = []
+	import type { WORKSPACE_EXPOSED } from './types';
+    export let data: WORKSPACE_EXPOSED["services"] = []
 </script>
 
 <div>
