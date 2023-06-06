@@ -27,7 +27,7 @@ export async function getStates(){
 
 export async function getExposedStates(){
     const s = await getStates()
-    const ret = s.map(w => ({...w, services: w.services.map(x => ({...x, ports: x.ports.map(y => ({...y, exposed: {port: getSubdomain(y.exposed.port)}}))}))}))
+    const ret = s.map(w => ({...w, services: w.services.map(x => ({...x, ports: x.ports.map(y => ({...y, exposed: {port: getSubdomain(y.mapped?.port)}}))}))}))
     return ret as WORKSPACE_EXPOSED[]
 }
 

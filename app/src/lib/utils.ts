@@ -148,7 +148,8 @@ export async function getAllSubdomainsInUse(state: WORKSPACE[]){
     }, [] as string[])
 }
 
-export function getSubdomain(port: number){
+export function getSubdomain(port: number|undefined){
+    console.log('exposed', port, allSubdomains[`${port}`])
     return allSubdomains[`${port}`]
 }
 
