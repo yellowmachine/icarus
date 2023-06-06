@@ -7,10 +7,11 @@
 
     const base = env.PUBLIC_DOMAIN
 
-    function url(port: number|undefined){
-        const dev = true;
-        const http = dev ? 'http': 'https'
-        const endPort = dev ? ":3001" : ""
+    function url(port: string|number|undefined){
+        console.log('dev:', dev)
+        const _dev = true;
+        const http = _dev ? 'http': 'https'
+        const endPort = _dev ? ":3001" : ""
         
         if(env.PUBLIC_MODE === 'subdomain')
             return `${http}://${port}.${base}${endPort}/`
@@ -24,6 +25,6 @@
 <div>{data.name}</div>
 <ul>
 {#each data.ports as port}
-    <li><a target="_blank" href={ url(port.mapped?.port) }>Open {port.mapped?.port}:{port.exposed.port}</a></li>
+    <li><a target="_blank" href={ url(port.exposed.port) }>Open {port.mapped?.port}</a></li>
 {/each}
 </ul>

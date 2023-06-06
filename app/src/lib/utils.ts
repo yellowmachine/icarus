@@ -155,6 +155,7 @@ export function getSubdomain(port: number){
 export async function getAllSubdomainsAvailable(state: WORKSPACE[]){
     const inUse = await getAllSubdomainsInUse(state)
     const diff = allSubdomainsNames.filter(x => !inUse.includes(x));
+    console.log('getAllSubdomainsAvailable diff', diff)
     return diff 
 }
 

@@ -19,13 +19,20 @@ const options = {
     changeOrigin: true, 
     ws: true,
     router: function(req) {
+        console.log(req.subdomains)
         const subdomain = req.subdomains[0]
+        console.log(subdomain)
         const port = domains[subdomain]
-        return {
-                protocol: 'http:',
-                host: 'localhost',
-                port: parseInt(port)
-            };
+        console.log(port)
+
+        const x = {
+          protocol: 'http:',
+          host: 'localhost',
+          port: parseInt(port)
+        }
+
+        console.log(x)
+        return x;
         }  
   };
 
