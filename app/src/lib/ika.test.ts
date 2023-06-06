@@ -113,15 +113,13 @@ describe('reading messages', () => {
         }))
 
         const dirs = vi.spyOn(utils, 'getWorkspaceNames');
-        dirs.mockImplementation(async ()=>[])
-
-        const s = state_empty[0]
+        dirs.mockImplementation(async ()=>['test-1'])
 
         const ws = vi.spyOn(utils, 'getWorkspaceState');
-        ws.mockImplementation(async (workspace: string) => s)
+        ws.mockImplementation(async (workspace: string) => state_empty[0])
 
-        await _up("test-1", specification)
+        await _up("../test-1", specification)
 
-        expect(m).toBeCalledWith("up", "../server/workspaces/test-1", [], {A: "9000"})
+        expect(m).toBeCalledWith("up", "../test-1", [], {A: "9000"})
     })
 })

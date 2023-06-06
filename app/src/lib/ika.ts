@@ -34,19 +34,18 @@ export async function getExposedStates(){
 /// WORKSPACE
 
 export async function _up(workspace: string, specification: string){
-    const p = `${rootPath}/${workspace}`
     const j = parse(specification) as {services: {ports: string[]}[]}
     const state = await getStates()
     const available = await getAllSubdomainsAvailable(state)
     const _env = Object.values(j.services).map( x => getEnv(x.ports, available))
     const env = Object.assign({}, ..._env)
-    return await cmd('up', p, [], env)  
+    return await cmd('up', workspace, [], env)  
 }
 
 export async function upWorkspace(workspace: string){
     const p = `${rootPath}/${workspace}`
     const specification = await readSpecification(p)
-    return await mutex.runExclusive(() => _up(workspace, specification))
+    return await mutex.runExclusive(() => _up(p, specification))
 }
 
 export async function cloneAndUpWorkspace(workspace: string){
