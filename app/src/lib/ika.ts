@@ -53,9 +53,10 @@ export async function cloneAndUpWorkspace(workspace: string){
     const readme = await readReadme(p)
     const specification = await readSpecification(p)
     const tmp = uuid()
-    const cloned = `${rootPath}/${workspace}_tmp_${tmp}`
+    const tmp_name = `${workspace}_tmp_${tmp}`
+    const cloned = `${rootPath}/${tmp_name}`
     await createWorkspace(cloned, readme, specification)
-    return await cmd('up', cloned)
+    return await upWorkspace(tmp_name)
 }
 
 export async function downWorkspace(workspace: string, options?: string[]){
