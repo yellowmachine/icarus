@@ -1,43 +1,25 @@
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const _domains = require('./src/domains.json')
 
-const app = express();
-
 const flip = (data) => Object.fromEntries(
-    Object
-      .entries(data)
-      .map(([key, value]) => [value, key])
-    );
-
+  Object
+    .entries(data)
+    .map(([key, value]) => [value, key])
+  );
 
 const domains = flip(_domains)
 
-/** @type {import('http-proxy-middleware/dist/types').Options} */
-const options = {
-    target: 'http://localhost',
-    changeOrigin: true, 
-    ws: true,
-    router: function(req) {
-        //console.log(req)
-        console.log(domains)
-        const subdomain = req.headers.host.split('.')[0]
-        console.log(subdomain)
-        const port = domains[subdomain]
-        console.log(port)
+const customResolver1 = function(host, url, req) {
+  const subdomain = host.split('.')[0]
+  const port = domains[subdomain]
 
-        const x = {
-          protocol: 'http:',
-          host: 'localhost',
-          port: parseInt(port)
-        }
+  return `http://127.0.0.1:${port}`
+};
 
-        console.log(x)
-        return x;
-        }  
-  };
+customResolver1.priority = 100;
 
-app.use('/', createProxyMiddleware(options));
-
-//module.exports = app
-app.listen(3001)
+const proxy = new require('redbird')({
+   port: 3001,
+   resolvers: [
+    customResolver1,
+   ]
+})

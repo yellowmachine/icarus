@@ -12,11 +12,11 @@
         
         if(dev){
             if(env.PUBLIC_MODE === 'subdomain')
-                return `${port}.${base}${endPort}/`
+                return `http://${port}.${base}${endPort}/`
             else if(env.PUBLIC_MODE === 'path')
-                return `${base}${endPort}/${port}/`
+                return `http://${base}${endPort}/${port}/`
             else
-                return `${base}:${port}/`
+                return `http://${base}:${port}/`
         }else{
             if(env.PUBLIC_MODE === 'subdomain')
                 return `https://${port}.${base}${endPort}/`

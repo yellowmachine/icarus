@@ -3,6 +3,7 @@ services:
     image: codenode
     ports: 
       - $A:8080
+      - $B:5173
     command:
       - /bin/sh
       - -c
