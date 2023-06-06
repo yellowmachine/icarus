@@ -33,6 +33,6 @@
 <div>{data.name}</div>
 <ul>
 {#each data.ports as port}
-    <li><a target="_blank" href={ url(port.exposed.port) }>Open {port.mapped?.port}</a></li>
+    <li><a target="_blank" href={ url(port.exposed.subdomain) }>Open {port.exposed.port}</a></li>
 {/each}
 </ul>

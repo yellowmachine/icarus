@@ -15,7 +15,8 @@ type EXPOSED_SERVICE = {
             port: number
         },
         exposed: {
-            port: string
+            port: string,
+            subdomain: string
         }
     }[]
 }
