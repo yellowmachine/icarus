@@ -1,0 +1,55 @@
+
+app.yellowdev.fun {
+
+    reverse_proxy 127.0.0.1:3000
+
+}
+
+angry-fridge.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9000
+        
+}        
+
+yellow-elephant.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9001
+        
+}        
+
+geological-gnu.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9002
+        
+}        
+
+topazine-toad.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9003
+        
+}        
+
+overluxurious-okapi.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9004
+        
+}        
+
+easternmost-eel.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9005
+        
+}        
+
+unagrarian-urus.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9006
+        
+}        
+
+zombified-zebrafinch.yellowdev.fun  {
+
+    reverse_proxy 127.0.0.1:9007
+        
+}        
+

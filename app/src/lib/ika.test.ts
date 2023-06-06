@@ -116,7 +116,15 @@ describe('reading messages', () => {
     test('test get all subdomains available one', async ()=>{
         const available = await utils.getAllSubdomainsAvailable(state_a)
 
-        assert.deepEqual(available, ["angry-fridge"])
+        assert.deepEqual(available, [
+            "angry-fridge",
+            "geological-gnu",
+            "topazine-toad",
+            "overluxurious-okapi",
+            "easternmost-eel",
+            "unagrarian-urus",
+            "zombified-zebrafinch",
+        ])
     })
 
     test("cmd is called with up command", async () => {
