@@ -18,12 +18,6 @@ pnpm i
 pnpm dev # open browser at localhost:5173
 ```
 
-## build docker image and run app locally
-
-```bash
-docker compose up --build # open browser at localhost:3000
-```
-
 # production
 
 I'm using `caddy` so you can `pnpm gencaddy > Caddyfile`

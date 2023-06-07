@@ -7,23 +7,24 @@
 
     const base = env.PUBLIC_DOMAIN
 
-    function url(port: string|number|undefined){
-        const endPort = dev ? ":3001" : ""
-        
+    type PORT = {
+        exposed: {
+            port: string,
+            subdomain: string
+        },
+        mapped?: {
+            port: number
+        }
+    }
+
+    function url(port: PORT){
         if(dev){
-            if(env.PUBLIC_MODE === 'subdomain')
-                return `http://${port}.${base}${endPort}/`
-            else if(env.PUBLIC_MODE === 'path')
-                return `http://${base}${endPort}/${port}/`
-            else
-                return `http://${base}:${port}/`
+            return `http://${base}:${port.mapped?.port}/`
         }else{
             if(env.PUBLIC_MODE === 'subdomain')
-                return `https://${port}.${base}${endPort}/`
+                return `https://${port.exposed.subdomain}.${base}/`
             else if(env.PUBLIC_MODE === 'path')
-                return `https://${base}${endPort}/${port}/`
-            else
-                return `https://${base}:${port}/`
+                return `https://${base}/${port.exposed.subdomain}/`
         }
 
         
@@ -33,6 +34,6 @@
 <div>{data.name}</div>
 <ul>
 {#each data.ports as port}
-    <li><a target="_blank" href={ url(port.exposed.subdomain) }>Open {port.exposed.port}</a></li>
+    <li><a target="_blank" href={ url(port) }>Open {port.exposed.port}</a></li>
 {/each}
 </ul>
