@@ -48,7 +48,7 @@ PUBLIC_MODE: subdomain | port | path
 ```yaml
 services:
   code: 
-    image: codenode
+    image: yellowmachine/codenode
     ports: 
       - $A:8080   # $A means icarus will find an available port to map 8080
       - $B:5173   # $B means icarus will find another available port to map 5173
