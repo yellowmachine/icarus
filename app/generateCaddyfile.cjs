@@ -1,7 +1,9 @@
 const domains = require('./src/domains.json')
+console.log(process.env)
+const domain = process.env.npm_config_domain;
 
 console.log(`
-app.yellowdev.fun {
+app.${domain} {
 
     reverse_proxy 127.0.0.1:3000
 
@@ -10,7 +12,7 @@ app.yellowdev.fun {
 
 Object.entries(domains).forEach(([port, subdomain])=>{
     console.log(
-`${subdomain}.yellowdev.fun  {
+`${subdomain}.${domain}  {
 
     reverse_proxy 127.0.0.1:${port}
         

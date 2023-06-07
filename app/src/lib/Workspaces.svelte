@@ -5,7 +5,7 @@
     export let data: WORKSPACE_EXPOSED[] = []
 
     let filter = ""
-    $: filtered = data.filter(x => x.workspace.startsWith(filter)).sort()
+    $: filtered = data.filter(x => x.workspace.toLowerCase().includes(filter.toLowerCase())).sort()
 
 </script>
 

@@ -20,7 +20,7 @@ pnpm dev # open browser at localhost:5173
 
 # production
 
-I'm using `caddy` so you can `pnpm gencaddy > Caddyfile`
+I'm using `caddy` so you can `npm run gencaddy --domain=example.com > /some/path/Caddyfile`
 
 An example of `docker-compose.yml` for production:
 
