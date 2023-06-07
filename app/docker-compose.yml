@@ -12,8 +12,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      - ORIGIN=https://app.yellowdev.fun
-      - MODE=subdomain
+      - ORIGIN=localhost
+      - MODE=port
       - PASSWORD=secret
       - JWT_SECRET=secret
       - DOMAIN=localhost
